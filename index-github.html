@@ -1,0 +1,2281 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padrões da Nova Home | Guia Oficial de UI, DataViz, Cores & WCAG 2.2</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#0052CC',
+              600: '#0043a8',
+              700: '#003380',
+              900: '#0a1d37',
+            },
+            totvs: {
+              navy: '#0B192C',
+              surface: '#0F172A',
+              card: '#1E293B',
+              border: '#334155',
+              accent: '#2563EB',
+              emerald: '#059669',
+              amber: '#D97706',
+              rose: '#DC2626'
+            }
+          },
+          boxShadow: {
+            'isometric': '0 25px 50px -12px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+            'iso-card': '-14px 18px 28px rgba(0, 82, 204, 0.18), 0 4px 6px rgba(0, 0, 0, 0.3)',
+            'glow-blue': '0 0 35px -5px rgba(37, 99, 235, 0.35)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* Estilos e Perspectiva 2D / 2.5D Isométrica */
+    .perspective-container {
+      perspective: 1200px;
+    }
+    .iso-tilt {
+      transform: rotateX(20deg) rotateY(-16deg) rotateZ(5deg);
+      transform-style: preserve-3d;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s ease;
+    }
+    .iso-tilt:hover {
+      transform: rotateX(12deg) rotateY(-8deg) rotateZ(2deg) translateY(-6px);
+    }
+    .iso-layer-1 { transform: translateZ(15px); }
+    .iso-layer-2 { transform: translateZ(35px); }
+    .iso-layer-3 { transform: translateZ(55px); }
+
+    /* Bento Card Glassmorphism */
+    .bento-card {
+      position: relative;
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.72) 0%, rgba(15, 23, 42, 0.88) 100%);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .bento-card:hover {
+      border-color: rgba(59, 130, 246, 0.38);
+      box-shadow: 0 20px 40px -15px rgba(0, 82, 204, 0.22);
+    }
+
+    /* WCAG Focus Ring Padronizado */
+    .focus-wcag:focus-visible {
+      outline: 2px solid #0052CC !important;
+      outline-offset: 2px !important;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #070D18; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #0052CC; }
+  </style>
+</head>
+
+<body class="bg-[#070D18] text-slate-100 font-sans antialiased selection:bg-brand-500 selection:text-white min-h-screen">
+
+  <header class="sticky top-0 z-50 backdrop-blur-xl bg-[#070D18]/90 border-b border-slate-800/80">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5 shrink-0">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-700 to-sky-400 p-[1.5px] shadow-glow-blue flex items-center justify-center">
+          <div class="w-full h-full bg-[#0B192C] rounded-[10px] flex items-center justify-center">
+            <svg class="w-5 h-5 text-sky-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5M9 11.25v1.5M12 9v3.75m3-6v6" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <span class="text-xs uppercase tracking-wider font-bold text-sky-400 font-mono block">Animalia PO UI 4.0+</span>
+          <h1 class="text-base sm:text-lg font-bold tracking-tight text-white flex items-center">
+            Padrões da Nova Home
+          </h1>
+        </div>
+      </div>
+
+      <nav class="hidden md:flex items-center flex-nowrap whitespace-nowrap gap-0.5 bg-slate-900/90 border border-slate-800 p-1 rounded-xl text-xs font-medium text-slate-300 overflow-x-auto">
+        <a href="#objetivo" class="px-2.5 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition whitespace-nowrap">Objetivo</a>
+        <a href="#principios" class="px-2.5 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition whitespace-nowrap">Princípios</a>
+        <a href="#catalogo" class="px-2.5 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition whitespace-nowrap">Catálogo PO UI</a>
+        <a href="#acessibilidade" class="px-2.5 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition whitespace-nowrap">WCAG 2.2</a>
+        <a href="#matriz" class="px-2.5 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition whitespace-nowrap">Matriz DEV</a>
+        <a href="#hierarquia" class="px-2.5 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition whitespace-nowrap">Hierarquia</a>
+        <a href="#cores" class="px-2.5 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition whitespace-nowrap">Padrões de Cores</a>
+        <a href="#feedbacks" class="px-2.5 py-1.5 rounded-lg hover:text-white hover:bg-slate-800 transition whitespace-nowrap">Feedbacks</a>
+      </nav>
+
+      <div class="flex items-center gap-3 shrink-0">
+        <span class="text-[11px] font-mono text-slate-400 hidden xl:inline-block">Documento Oficial TOTVS</span>
+      </div>
+    </div>
+  </header>
+
+  <section id="objetivo" class="relative overflow-hidden pt-12 pb-16 border-b border-slate-800/80">
+    <div class="absolute -top-40 left-1/2 -translate-x-1/2 w-[700px] h-[360px] bg-blue-600/15 rounded-full blur-[140px] pointer-events-none"></div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+        
+        <div class="lg:col-span-7 space-y-6">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-sky-400 text-xs font-mono font-medium">
+            <span class="w-2 h-2 rounded-full bg-sky-400 animate-pulse"></span>
+            Guia de UI, Data Visualization & Design System
+          </div>
+
+          <div class="space-y-3">
+            <span class="text-xs font-mono text-sky-400 uppercase tracking-widest block font-bold">Documento Técnico de Referência</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white tracking-tight leading-snug">
+              Objetivo do documento
+            </h2>
+            <p class="text-slate-300 text-base sm:text-lg leading-relaxed font-normal bg-slate-900/60 border border-slate-800 p-5 rounded-2xl">
+              Ser o apoio para as equipes de Produto, Design e Desenvolvimento na estruturação visual da Nova Home. O foco é garantir que a disposição dos dados respeite os hábitos visuais humanos, reduza a carga cognitiva e elimine a poluição visual, entregando valor de forma rápida, intuitiva e performática.
+            </p>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <h3 class="text-xl sm:text-2xl font-bold text-white tracking-tight">
+              Padrões de Gráficos
+            </h3>
+            <h4 class="text-lg font-semibold text-sky-300">
+              Guia de Boas Práticas para Gráficos
+            </h4>
+            <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
+              A Nova Home TOTVS atua como o portal centralizador de produtividade da empresa. Por atender a perfis variados (desde diretores executivos até analistas operacionais), a precisão visual, a simplicidade e a acessibilidade não são opcionais: são pré-requisitos de arquitetura. Este documento consolida as diretrizes do PO UI, os fundamentos científicos de Data Visualization e os critérios de conformidade técnica da WCAG 2.2 (Web Content Accessibility Guidelines).
+            </p>
+          </div>
+        </div>
+
+        <!-- Ilustração 2D em Perspectiva Isométrica -->
+        <div class="lg:col-span-5 flex justify-center perspective-container">
+          <div class="relative w-full max-w-md iso-tilt">
+            <div class="w-full bg-slate-900/95 border-2 border-sky-500/40 rounded-3xl p-5 shadow-isometric relative overflow-hidden">
+              <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
+                  <div class="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                  <div class="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+                  <span class="text-xs font-mono text-slate-400 ml-1">Nova Home • Tela Única</span>
+                </div>
+                <span class="text-[9px] font-mono px-2 py-0.5 rounded bg-blue-950 text-sky-300 border border-blue-800">1º Seg: Área de Ouro</span>
+              </div>
+
+              <!-- Mini Maquete Bento da Tela -->
+              <div class="grid grid-cols-3 gap-2.5 my-3">
+                <div class="bg-gradient-to-br from-blue-900/60 to-slate-800 p-2.5 rounded-xl border border-blue-500/40">
+                  <span class="text-[9px] font-mono text-sky-300 block">Big Number</span>
+                  <div class="text-base font-bold text-white mt-0.5">850 mil</div>
+                  <span class="text-[8px] text-emerald-400 font-semibold">+12,4%</span>
+                </div>
+                <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                  <span class="text-[9px] font-mono text-slate-400 block">KPI Secundário</span>
+                  <div class="text-base font-bold text-white mt-0.5">1.240</div>
+                  <span class="text-[8px] text-slate-400">Total</span>
+                </div>
+                <div class="bg-slate-800/80 p-2.5 rounded-xl border border-slate-700">
+                  <span class="text-[9px] font-mono text-slate-400 block">Meta Fixa</span>
+                  <div class="text-base font-bold text-emerald-400 mt-0.5">75%</div>
+                  <span class="text-[8px] text-emerald-300">No Esperado</span>
+                </div>
+              </div>
+
+              <!-- Miniatura Donut e Linha -->
+              <div class="grid grid-cols-2 gap-2.5 pt-1">
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex items-center gap-2">
+                  <svg viewBox="0 0 36 36" class="w-12 h-12 shrink-0">
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#2563EB" stroke-width="4.5" stroke-dasharray="45, 100"/>
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#059669" stroke-width="4.5" stroke-dasharray="25, 100" stroke-dashoffset="-45"/>
+                    <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#D97706" stroke-width="4.5" stroke-dasharray="15, 100" stroke-dashoffset="-70"/>
+                  </svg>
+                  <div class="text-[9px] text-slate-300 font-mono">
+                    <div>Rosca c/ Furo</div>
+                    <div class="text-sky-400 font-bold">1.240 Total</div>
+                  </div>
+                </div>
+
+                <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800">
+                  <div class="text-[9px] text-slate-400 font-mono mb-1">Linha 2-3px c/ Forma</div>
+                  <svg viewBox="0 0 100 35" class="w-full h-8">
+                    <path d="M 5,28 L 30,18 L 60,22 L 95,8" fill="none" stroke="#38BDF8" stroke-width="2"/>
+                    <circle cx="5" cy="28" r="2.5" fill="#38BDF8"/>
+                    <circle cx="30" cy="18" r="2.5" fill="#38BDF8"/>
+                    <circle cx="60" cy="22" r="2.5" fill="#38BDF8"/>
+                    <circle cx="95" cy="8" r="2.5" fill="#38BDF8"/>
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Camada Flutuante 1: Regra 60-30-10 -->
+            <div class="absolute -top-4 -right-4 bg-slate-900 border border-blue-500 rounded-xl p-3 shadow-iso-card iso-layer-2 max-w-[190px]">
+              <span class="text-[10px] font-mono text-sky-300 font-bold block">Regra 60-30-10</span>
+              <span class="text-[10px] text-slate-300">Equilíbrio no padrão estético e visual</span>
+            </div>
+
+            <!-- Camada Flutuante 2: Hitbox 24x24px -->
+            <div class="absolute -bottom-4 -left-4 bg-slate-900 border border-amber-500/50 rounded-xl p-2.5 shadow-iso-card iso-layer-3 flex items-center gap-2">
+              <div class="w-6 h-6 border border-dashed border-amber-400 bg-amber-500/10 rounded flex items-center justify-center text-[9px] font-mono text-amber-300 font-bold">
+                24px
+              </div>
+              <span class="text-[10px] text-slate-300 font-mono">Hitbox WCAG 2.5.8</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 space-y-16" id="principios">
+
+    <section class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-sky-400 uppercase tracking-widest font-bold block">1.1.1</span>
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
+          Princípios Gerais de Visualização de Dados para Devs
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- 1.1.1.1 A Regra dos 5 Segundos & Aceleração Cognitiva (Ilustração Ampliada e Detalhada) -->
+        <div class="bento-card rounded-3xl p-6 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 text-sky-400 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-white">
+              A Regra dos 5 Segundos & Aceleração Cognitiva
+            </h4>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Um gráfico em uma home ou dashboard corporativo serve para tomar decisões ou identificar anomalias, não para ser decorativo. O usuário deve entender a mensagem principal (a "história" dos dados) em no máximo 5 segundos.
+            </p>
+
+            <!-- Ilustração 2D Ampliada, Otimizada e Detalhada: Varredura Ocular e Aceleração Cognitiva -->
+            <div class="bg-slate-950/90 border border-slate-800 rounded-2xl p-4 my-3 space-y-3">
+              <div class="flex items-center justify-between pb-2 border-b border-slate-800/80 text-[10px] font-mono">
+                <span class="text-slate-300 flex items-center gap-1.5 font-bold">
+                  <span class="w-2 h-2 rounded-full bg-sky-400"></span>
+                  Gaze Plot / Varredura Ocular (Padrão F/Z)
+                </span>
+                <span class="text-emerald-400 font-bold bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
+                  Tempo Total &le; 5.0s
+                </span>
+              </div>
+
+              <!-- Diagrama SVG Amplo e Otimizado -->
+              <svg viewBox="0 0 320 185" class="w-full h-48 rounded-xl bg-[#091120] border border-slate-800/80">
+                <defs>
+                  <linearGradient id="scanGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="#38BDF8" stop-opacity="0.8"/>
+                    <stop offset="50%" stop-color="#2563EB" stop-opacity="0.6"/>
+                    <stop offset="100%" stop-color="#059669" stop-opacity="0.9"/>
+                  </linearGradient>
+                  <filter id="glowDrop" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="3" result="blur"/>
+                    <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+                  </filter>
+                </defs>
+
+                <!-- Mini Grid Wireframe de Fundo (Contexto da Nova Home) -->
+                <!-- Card 1 (Área de Ouro) -->
+                <rect x="15" y="15" width="135" height="60" rx="8" fill="#0F172A" stroke="#2563EB" stroke-width="1.2"/>
+                <text x="25" y="32" fill="#94A3B8" font-size="7.5" font-family="monospace">RECEITA LÍQUIDA (OURO)</text>
+                <text x="25" y="52" fill="#FFFFFF" font-size="13" font-family="monospace" font-weight="bold">R$ 850 mil</text>
+                <rect x="98" y="40" width="42" height="15" rx="3" fill="rgba(5, 150, 105, 0.25)" stroke="#059669" stroke-width="0.8"/>
+                <text x="119" y="51" fill="#34D399" font-size="7" font-family="sans-serif" text-anchor="middle" font-weight="bold">+12,4%</text>
+
+                <!-- Card 2 (Visão de Apoio) -->
+                <rect x="165" y="15" width="140" height="60" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+                <text x="175" y="32" fill="#94A3B8" font-size="7.5" font-family="monospace">TOTAL PROCESSOS</text>
+                <text x="175" y="52" fill="#FFFFFF" font-size="13" font-family="monospace" font-weight="bold">1.240 un</text>
+                <!-- Mini barras secundárias -->
+                <rect x="255" y="44" width="8" height="18" rx="1.5" fill="#38BDF8"/>
+                <rect x="268" y="38" width="8" height="24" rx="1.5" fill="#38BDF8"/>
+                <rect x="281" y="48" width="8" height="14" rx="1.5" fill="#64748B"/>
+
+                <!-- Card 3 (Gráfico Operacional Inferior) -->
+                <rect x="15" y="88" width="290" height="82" rx="8" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+                <text x="25" y="104" fill="#94A3B8" font-size="7.5" font-family="monospace">TENDÊNCIA & PONTOS CRÍTICOS OPERACIONAIS</text>
+                <!-- Grade sutil -->
+                <line x1="25" y1="148" x2="295" y2="148" stroke="#1E293B" stroke-width="1"/>
+                <line x1="25" y1="126" x2="295" y2="126" stroke="#1E293B" stroke-width="1"/>
+                <!-- Linha de tendência do dashboard -->
+                <path d="M 30,144 Q 80,128 120,136 T 210,118 T 285,122" fill="none" stroke="#1E3A8A" stroke-width="2.5"/>
+
+                <!-- TRAJETÓRIA OCULAR / SCANNING PATH (Padrão F/Z) -->
+                <path d="M 65,48 L 225,48 L 120,132 L 255,120" fill="none" stroke="url(#scanGlow)" stroke-width="2.5" stroke-dasharray="4,3" filter="url(#glowDrop)"/>
+
+                <!-- PONTO 1: Fixação Inicial (1s) na Área de Ouro -->
+                <g transform="translate(65,48)">
+                  <circle cx="0" cy="0" r="14" fill="rgba(37, 99, 235, 0.25)" stroke="#38BDF8" stroke-width="2"/>
+                  <circle cx="0" cy="0" r="7" fill="#2563EB"/>
+                  <text x="0" y="3.5" fill="#FFFFFF" font-size="8" font-family="monospace" text-anchor="middle" font-weight="bold">1s</text>
+                  <!-- Tag explicativa -->
+                  <rect x="-35" y="-30" width="70" height="15" rx="4" fill="#0B192C" stroke="#38BDF8" stroke-width="0.8"/>
+                  <text x="0" y="-19.5" fill="#38BDF8" font-size="6.5" font-family="sans-serif" text-anchor="middle" font-weight="bold">1º Seg: Área de Ouro</text>
+                </g>
+
+                <!-- PONTO 2: Variação / KPI de Apoio (2.5s) -->
+                <g transform="translate(225,48)">
+                  <circle cx="0" cy="0" r="13" fill="rgba(56, 189, 248, 0.25)" stroke="#38BDF8" stroke-width="1.8"/>
+                  <circle cx="0" cy="0" r="6" fill="#0284C7"/>
+                  <text x="0" y="3" fill="#FFFFFF" font-size="7.5" font-family="monospace" text-anchor="middle" font-weight="bold">2.5s</text>
+                  <rect x="-32" y="-28" width="64" height="14" rx="4" fill="#0B192C" stroke="#64748B" stroke-width="0.8"/>
+                  <text x="0" y="-18.5" fill="#94A3B8" font-size="6.5" font-family="sans-serif" text-anchor="middle">Contexto Secundário</text>
+                </g>
+
+                <!-- PONTO 3: Diagnóstico Operacional (4s) -->
+                <g transform="translate(120,132)">
+                  <circle cx="0" cy="0" r="12" fill="rgba(217, 119, 6, 0.25)" stroke="#D97706" stroke-width="1.8"/>
+                  <circle cx="0" cy="0" r="5.5" fill="#D97706"/>
+                  <text x="0" y="3" fill="#FFFFFF" font-size="7" font-family="monospace" text-anchor="middle" font-weight="bold">4s</text>
+                  <rect x="-32" y="16" width="64" height="14" rx="4" fill="#0B192C" stroke="#D97706" stroke-width="0.8"/>
+                  <text x="0" y="26" fill="#FBBF24" font-size="6.5" font-family="sans-serif" text-anchor="middle">Validação da Tendência</text>
+                </g>
+
+                <!-- PONTO 4: Aceleração Cognitiva & Tomada de Decisão (5s) -->
+                <g transform="translate(255,120)">
+                  <circle cx="0" cy="0" r="14" fill="rgba(5, 150, 105, 0.3)" stroke="#10B981" stroke-width="2.2"/>
+                  <circle cx="0" cy="0" r="7" fill="#059669"/>
+                  <text x="0" y="3.5" fill="#FFFFFF" font-size="8" font-family="monospace" text-anchor="middle" font-weight="bold">5s</text>
+                  <rect x="-42" y="-30" width="84" height="16" rx="4" fill="#064E3B" stroke="#34D399" stroke-width="1"/>
+                  <text x="0" y="-19" fill="#A7F3D0" font-size="7" font-family="sans-serif" text-anchor="middle" font-weight="bold">✓ DECISÃO TOMADA</text>
+                </g>
+              </svg>
+
+              <!-- Legenda Detalhada em Grid -->
+              <div class="grid grid-cols-4 gap-1.5 pt-1 text-[9px] font-mono text-center">
+                <div class="p-1.5 bg-blue-950/60 border border-blue-500/30 rounded-lg">
+                  <span class="text-sky-300 font-bold block">1.0s</span>
+                  <span class="text-slate-400 text-[8px]">Big Number</span>
+                </div>
+                <div class="p-1.5 bg-slate-900 border border-slate-800 rounded-lg">
+                  <span class="text-sky-400 font-bold block">2.5s</span>
+                  <span class="text-slate-400 text-[8px]">Métrica Suporte</span>
+                </div>
+                <div class="p-1.5 bg-amber-950/40 border border-amber-500/30 rounded-lg">
+                  <span class="text-amber-400 font-bold block">4.0s</span>
+                  <span class="text-slate-400 text-[8px]">Tendência</span>
+                </div>
+                <div class="p-1.5 bg-emerald-950/60 border border-emerald-500/40 rounded-lg">
+                  <span class="text-emerald-300 font-bold block">5.0s</span>
+                  <span class="text-slate-300 text-[8px]">Decisão</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-800 bg-slate-900/60 -mx-6 -mb-6 p-4 rounded-b-3xl">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">Decisão Rápida</span>
+              <span class="text-emerald-400 font-bold">&le; 5 Segundos</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.1.1.2 Proporção Dados-Tinta -->
+        <div class="bento-card rounded-3xl p-6 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-white">
+              Proporção Dados-Tinta
+            </h4>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              Conceito formulado por Edward Tufte: Maximize a tinta de dados, elimine a tinta que não é dado.
+            </p>
+
+            <!-- Ilustração 2D Comparativa: Tinta-Dado vs Ruído -->
+            <div class="grid grid-cols-2 gap-2 my-2 text-[10px] font-mono">
+              <div class="bg-rose-950/20 border border-rose-500/30 rounded-xl p-2.5">
+                <span class="text-rose-400 font-bold block mb-1">✕ Ruído / 3D / Grade</span>
+                <svg viewBox="0 0 90 45" class="w-full h-11 bg-slate-900 rounded">
+                  <line x1="5" y1="10" x2="85" y2="10" stroke="#475569" stroke-width="1.2"/>
+                  <line x1="5" y1="20" x2="85" y2="20" stroke="#475569" stroke-width="1.2"/>
+                  <line x1="5" y1="30" x2="85" y2="30" stroke="#475569" stroke-width="1.2"/>
+                  <rect x="15" y="15" width="16" height="25" fill="#2563EB" filter="drop-shadow(2px 2px 2px #000)"/>
+                  <polygon points="31,15 36,10 36,35 31,40" fill="#1D4ED8"/>
+                  <rect x="45" y="8" width="16" height="32" fill="#2563EB" filter="drop-shadow(2px 2px 2px #000)"/>
+                  <polygon points="61,8 66,3 66,28 61,33" fill="#1D4ED8"/>
+                </svg>
+              </div>
+
+              <div class="bg-emerald-950/20 border border-emerald-500/30 rounded-xl p-2.5">
+                <span class="text-emerald-400 font-bold block mb-1">✓ Tinta de Dados Pura</span>
+                <svg viewBox="0 0 90 45" class="w-full h-11 bg-slate-950 rounded">
+                  <line x1="5" y1="38" x2="85" y2="38" stroke="#334155" stroke-width="0.8"/>
+                  <rect x="18" y="16" width="14" height="22" rx="2" fill="#38BDF8"/>
+                  <text x="25" y="12" fill="#38BDF8" font-size="7" font-family="monospace" text-anchor="middle">45</text>
+                  <rect x="48" y="8" width="14" height="30" rx="2" fill="#38BDF8"/>
+                  <text x="55" y="6" fill="#38BDF8" font-size="7" font-family="monospace" text-anchor="middle">72</text>
+                </svg>
+              </div>
+            </div>
+
+            <div class="pt-1">
+              <span class="text-xs font-semibold text-rose-300 block mb-2 font-mono">O que eliminar (Tinta Não-Dado):</span>
+              <ul class="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
+                <li>Linhas de grade (gridlines) muito escuras ou espessas. Use no máximo a cor do token de borda suavizada.</li>
+                <li>Bordas ao redor do container do gráfico se a hierarquia já for mantida por espaços em branco.</li>
+                <li>Efeitos 3D, sombras projetadas excessivas e gradientes chamativos no corpo das formas.</li>
+                <li>Legendas duplicadas quando os dados já possuem labels diretos nas barras ou fatias.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1.1.1.3 Redução de Carga Cognitiva com Leis da Gestalt -->
+        <div class="bento-card rounded-3xl p-6 flex flex-col justify-between">
+          <div class="space-y-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+              <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+              </svg>
+            </div>
+            <h4 class="text-lg font-bold text-white">
+              Redução de Carga Cognitiva com Leis da Gestalt
+            </h4>
+            <p class="text-slate-300 text-sm leading-relaxed">
+              A mente humana busca padrões visuais automaticamente. Devemos estruturar a UI para guiar essa percepção:
+            </p>
+
+            <!-- Ilustração 2D das Leis da Gestalt aplicadas ao Data Viz -->
+            <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-3 my-2">
+              <svg viewBox="0 0 220 50" class="w-full h-12">
+                <!-- Proximidade: grupos de pontos -->
+                <rect x="5" y="10" width="8" height="8" rx="2" fill="#38BDF8"/>
+                <rect x="16" y="10" width="8" height="8" rx="2" fill="#38BDF8"/>
+                <rect x="5" y="21" width="8" height="8" rx="2" fill="#38BDF8"/>
+                <rect x="16" y="21" width="8" height="8" rx="2" fill="#38BDF8"/>
+                <text x="15" y="42" fill="#94A3B8" font-size="6" text-anchor="middle" font-family="monospace">Proximidade</text>
+
+                <!-- Similaridade: formas e cores idênticas -->
+                <circle cx="60" cy="14" r="4" fill="#059669"/>
+                <circle cx="72" cy="14" r="4" fill="#059669"/>
+                <rect x="56" y="21" width="8" height="8" rx="1" fill="#D97706"/>
+                <rect x="68" y="21" width="8" height="8" rx="1" fill="#D97706"/>
+                <text x="66" y="42" fill="#94A3B8" font-size="6" text-anchor="middle" font-family="monospace">Similaridade</text>
+
+                <!-- Enclausuramento / Card delimitador -->
+                <rect x="105" y="8" width="40" height="23" rx="4" fill="rgba(37,99,235,0.15)" stroke="#2563EB" stroke-width="1"/>
+                <circle cx="118" cy="19" r="3.5" fill="#38BDF8"/>
+                <circle cx="132" cy="19" r="3.5" fill="#38BDF8"/>
+                <text x="125" y="42" fill="#94A3B8" font-size="6" text-anchor="middle" font-family="monospace">Enclausuramento</text>
+
+                <!-- Conexão: linha unindo pontos -->
+                <line x1="165" y1="22" x2="185" y2="12" stroke="#38BDF8" stroke-width="1.8"/>
+                <line x1="185" y1="12" x2="208" y2="25" stroke="#38BDF8" stroke-width="1.8"/>
+                <circle cx="165" cy="22" r="3" fill="#38BDF8"/>
+                <circle cx="185" cy="12" r="3" fill="#38BDF8"/>
+                <circle cx="208" cy="25" r="3" fill="#38BDF8"/>
+                <text x="186" y="42" fill="#94A3B8" font-size="6" text-anchor="middle" font-family="monospace">Conexão</text>
+              </svg>
+            </div>
+
+            <ul class="text-xs text-slate-300 space-y-2 pt-1 font-sans">
+              <li><strong class="text-sky-300">Proximidade:</strong> Agrupar labels e métricas perto de suas respectivas barras/linhas.</li>
+              <li><strong class="text-sky-300">Similaridade:</strong> Usar a mesma cor para o mesmo tipo de dado entre gráficos diferentes.</li>
+              <li><strong class="text-sky-300">Fechamento:</strong> Permitir que o olho 'complete' o gráfico sem poluir com eixos pesados.</li>
+              <li><strong class="text-sky-300">Enclausuramento:</strong> Usar cards suaves para delimitar contextos de indicadores distintos.</li>
+              <li><strong class="text-sky-300">Conexão:</strong> Usar linhas limpas e finas para vincular pontos temporais contínuo</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="catalogo" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-sky-400 uppercase tracking-widest font-bold block">1.1.2</span>
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
+          Catálogo de Gráficos PO UI: Quando Usar, Evitar e Acessibilidade
+        </h3>
+      </div>
+
+      <!-- Abas de Navegação do Catálogo (Primeira aba ativa por padrão) -->
+      <div class="flex flex-wrap gap-2 border-b border-slate-800 pb-3" role="tablist">
+        <button onclick="switchCatalogTab('area', this)" data-catalog-tab="area" class="catalog-tab-btn active px-4 py-2.5 rounded-xl bg-blue-600 text-white font-medium text-xs border border-blue-400/40 shadow-lg shadow-blue-600/30 transition focus-wcag">
+          Gráfico de Área
+        </button>
+        <button onclick="switchCatalogTab('barra', this)" data-catalog-tab="barra" class="catalog-tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition focus-wcag">
+          Gráfico de Barra
+        </button>
+        <button onclick="switchCatalogTab('coluna', this)" data-catalog-tab="coluna" class="catalog-tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition focus-wcag">
+          Gráfico de Coluna
+        </button>
+        <button onclick="switchCatalogTab('gauge', this)" data-catalog-tab="gauge" class="catalog-tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition focus-wcag">
+          Gráfico de Gauge Semicircular
+        </button>
+        <button onclick="switchCatalogTab('linha', this)" data-catalog-tab="linha" class="catalog-tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition focus-wcag">
+          Gráfico de Linha
+        </button>
+        <button onclick="switchCatalogTab('pizza-rosca', this)" data-catalog-tab="pizza-rosca" class="catalog-tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition focus-wcag">
+          Gráfico de Pizza e Gráfico Rosca
+        </button>
+        <button onclick="switchCatalogTab('radar', this)" data-catalog-tab="radar" class="catalog-tab-btn px-4 py-2.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs border border-slate-700 transition focus-wcag">
+          Gráfico de Radar
+        </button>
+      </div>
+
+      <!-- Conteúdo das Abas do Catálogo -->
+      <div id="catalogTabContent" class="space-y-6">
+
+        <!-- ABA 1: Gráfico de Área (Ativa por padrão) -->
+        <div id="tab-area" class="catalog-pane space-y-6">
+          <div class="bento-card rounded-3xl p-7">
+            <h4 class="text-xl font-bold text-white mb-2">Gráfico de Área</h4>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              Combina a linha temporária com o preenchimento inferior. A versão disponível no PO UI é o Overlapping Area Chart(Área sobreposta).
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-4">
+              <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-2">
+                <span class="text-xs font-mono text-emerald-400 font-bold block uppercase">Quando Usar:</span>
+                <ul class="text-xs text-slate-300 space-y-1 list-disc pl-4">
+                  <li>Representar totais acumulados ao longo do tempo (ex: volume financeiro acumulado).</li>
+                  <li>Exibir tendências onde a diferença de volume/área abaixo da linha agrega valor à interpretação.</li>
+                </ul>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-2">
+                <span class="text-xs font-mono text-rose-400 font-bold block uppercase">O que EVITAR:</span>
+                <ul class="text-xs text-slate-300 space-y-1 list-disc pl-4">
+                  <li>Não sobreponha mais de 3 séries de dados. Mais do que isso cria oclusão visual e poluição.</li>
+                  <li>Não use opacidade de preenchimento em 100%. A transparência da área preenchida deve ser ajustada entre 15% e 30% para não esconder séries que estejam atrás.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Ilustração Técnica Comparativa -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div class="bg-slate-950 border border-emerald-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-emerald-400 font-mono block mb-2">✓ CERTO / RECOMENDADO</span>
+                <span class="text-xs text-slate-300 block mb-2">Visualização Recomendada: Série A, Série B, Série C</span>
+                <svg viewBox="0 0 200 80" class="w-full h-24">
+                  <path d="M 10,70 L 50,55 L 90,40 L 130,48 L 170,25 L 190,20 L 190,75 L 10,75 Z" fill="rgba(37, 99, 235, 0.22)" stroke="#2563EB" stroke-width="2"/>
+                  <path d="M 10,65 L 50,45 L 90,60 L 130,30 L 170,35 L 190,45 L 190,75 L 10,75 Z" fill="rgba(5, 150, 105, 0.18)" stroke="#059669" stroke-width="1.8"/>
+                </svg>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-2 list-disc pl-4">
+                  <li>Usar no máximo 3 séries de dados simultâneas.</li>
+                  <li>Manter a transparência da área entre 15% e 30% para não ocluir os dados ao fundo.</li>
+                </ul>
+              </div>
+
+              <div class="bg-slate-950 border border-rose-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-rose-400 font-mono block mb-2">✕ ERRADO / A EVITAR</span>
+                <span class="text-xs text-slate-300 block mb-2">Visualização Obscurecida (5 séries sobrepostas)</span>
+                <svg viewBox="0 0 200 80" class="w-full h-24">
+                  <path d="M 10,70 L 60,70 L 60,40 L 120,40 L 120,25 L 190,25 L 190,75 L 10,75 Z" fill="#2563EB"/>
+                  <path d="M 10,70 L 60,70 L 60,50 L 120,50 L 120,35 L 190,35 L 190,75 L 10,75 Z" fill="#9333EA"/>
+                  <path d="M 10,70 L 60,70 L 60,60 L 120,60 L 120,45 L 190,45 L 190,75 L 10,75 Z" fill="#DB2777"/>
+                </svg>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-2 list-disc pl-4">
+                  <li>Evitar sobrepor mais de 3 séries de dados simultâneas.</li>
+                  <li>Não utilizar preenchimento 100% opaco que impeça a leitura.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 2: Gráfico de Barra -->
+        <div id="tab-barra" class="catalog-pane hidden space-y-6">
+          <div class="bento-card rounded-3xl p-7">
+            <h4 class="text-xl font-bold text-white mb-2">Gráfico de Barra</h4>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              Organizado com categorias no eixo vertical (Y) e valores numéricos no eixo horizontal (X).
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 text-xs text-slate-300">
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-emerald-400 font-bold block mb-2 uppercase">Quando Usar:</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Comparar itens categorizados diretamente entre si (ex: Vendas por Filial, Chamados por Departamento).</li>
+                  <li>Sempre que os nomes das categorias/rótulos forem longos. O eixo vertical evita que o texto seja truncado com reticências ou precise ser inclinado.</li>
+                </ul>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-sky-400 font-bold block mb-2 uppercase">Boas Práticas:</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Prefira o gráfico de barras quando houver mais de 7 a 10 categorias para análise.</li>
+                  <li>Ordene as barras por valor (do maior para o menor) para facilitar a comparação rápida, a menos que haja uma ordem natural (como faixas etárias ou processo de etapa).</li>
+                </ul>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-amber-400 font-bold block mb-2 uppercase">Acessibilidade (WCAG 2.2):</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>As barras devem apresentar rótulos visíveis de dados (data labels) diretamente ao lado da extremidade da barra para evitar o movimento sacádico contínuo dos olhos até o eixo X.</li>
+                  <li>Área de Toque/Hover: Garanta que a área interativa do tooltip cubra a barra inteira com espaçamento suficiente entre barras de no mínimo 8px para evitar acionamentos incorretos em telas sensíveis ao toque (WCAG 2.5.8 Target Size - Minimum).</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Ilustração Comparativa -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div class="bg-slate-950 border border-emerald-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-emerald-400 font-mono block mb-2">✓ CERTO / RECOMENDADO</span>
+                <div class="space-y-2 text-xs font-mono">
+                  <div class="flex justify-between items-center text-slate-300">
+                    <span>Vendas Online</span>
+                    <div class="flex items-center gap-2"><div class="w-28 bg-blue-600 h-3 rounded"></div><span class="text-sky-300 font-bold">850</span></div>
+                  </div>
+                  <div class="flex justify-between items-center text-slate-300">
+                    <span>Marketing Digital</span>
+                    <div class="flex items-center gap-2"><div class="w-24 bg-blue-600 h-3 rounded"></div><span class="text-sky-300 font-bold">720</span></div>
+                  </div>
+                  <div class="flex justify-between items-center text-slate-300">
+                    <span>Suporte ao Cliente</span>
+                    <div class="flex items-center gap-2"><div class="w-20 bg-blue-600 h-3 rounded"></div><span class="text-sky-300 font-bold">580</span></div>
+                  </div>
+                  <div class="flex justify-between items-center text-slate-300">
+                    <span>Desenvolvimento</span>
+                    <div class="flex items-center gap-2"><div class="w-14 bg-blue-600 h-3 rounded"></div><span class="text-sky-300 font-bold">430</span></div>
+                  </div>
+                  <div class="flex justify-between items-center text-slate-300">
+                    <span>Recursos Humanos</span>
+                    <div class="flex items-center gap-2"><div class="w-10 bg-blue-600 h-3 rounded"></div><span class="text-sky-300 font-bold">310</span></div>
+                  </div>
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-3 list-disc pl-4">
+                  <li>Usar eixo vertical (Y) para categorias com nomes longos.</li>
+                  <li>Ordenar barras por valor para facilitar a comparação visual.</li>
+                  <li>Incluir rótulos de dados nas extremidades das barras.</li>
+                </ul>
+              </div>
+
+              <div class="bg-slate-950 border border-rose-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-rose-400 font-mono block mb-2">✕ ERRADO / A EVITAR</span>
+                <div class="h-28 flex items-end justify-center gap-3 pt-4 border-b border-slate-800">
+                  <div class="w-6 bg-slate-600 h-20"></div>
+                  <div class="w-6 bg-slate-600 h-10"></div>
+                  <div class="w-6 bg-slate-600 h-16"></div>
+                  <div class="w-6 bg-slate-600 h-8"></div>
+                </div>
+                <div class="text-[10px] text-rose-300 font-mono mt-1 transform rotate-[-25deg] origin-top-left">
+                  Rótulos inclinados 45°
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-4 list-disc pl-4">
+                  <li>Evitar categorias longas no eixo horizontal para prevenir quebra ou truncamento de texto.</li>
+                  <li>Não ocultar os rótulos de dados importantes ou poluir o espaçamento das barras.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 3: Gráfico de Coluna -->
+        <div id="tab-coluna" class="catalog-pane hidden space-y-6">
+          <div class="bento-card rounded-3xl p-7">
+            <h4 class="text-xl font-bold text-white mb-2">Gráfico de Coluna</h4>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              Organizado com categorias/tempo no eixo horizontal (X) e valores numéricos no eixo vertical (Y).
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 text-xs text-slate-300">
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-emerald-400 font-bold block mb-2 uppercase">Quando Usar:</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Demonstrar variações de dados ordenados temporalmente (dias, meses, trimestres).</li>
+                  <li>Comparações entre um número reduzido de categorias (idealmente até 7).</li>
+                </ul>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-rose-400 font-bold block mb-2 uppercase">O que EVITAR:</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Nunca incline textos no eixo horizontal (ex: rótulos em 45 graus) para fazer caber mais categorias. Se o espaço horizontal for insuficiente para ler o texto sem inclinação, mude obrigatoriamente para o Gráfico de Barra.</li>
+                </ul>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-amber-400 font-bold block mb-2 uppercase">Acessibilidade (WCAG 2.2):</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>O eixo base numérico deve obrigatoriamente começar no valor zero (0). Interromper o eixo Y distorce a altura proporcional da coluna e induz o usuário ao erro, ferindo o princípio de operabilidade e clareza cognitiva.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Comparativo -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div class="bg-slate-950 border border-emerald-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-emerald-400 font-mono block mb-2">✓ CERTO / RECOMENDADO</span>
+                <span class="text-xs text-slate-300 block mb-2 font-mono">Receita por Trimestre (Eixo Y inicia em 0)</span>
+                <div class="h-24 flex items-end justify-around border-b border-slate-800 px-4">
+                  <div class="text-center"><span class="text-[9px] text-sky-300 font-mono block">450</span><div class="w-6 bg-blue-600 h-12 rounded-t"></div><span class="text-[9px] text-slate-400 font-mono mt-1 block">Q1</span></div>
+                  <div class="text-center"><span class="text-[9px] text-sky-300 font-mono block">620</span><div class="w-6 bg-blue-600 h-16 rounded-t"></div><span class="text-[9px] text-slate-400 font-mono mt-1 block">Q2</span></div>
+                  <div class="text-center"><span class="text-[9px] text-sky-300 font-mono block">580</span><div class="w-6 bg-blue-600 h-14 rounded-t"></div><span class="text-[9px] text-slate-400 font-mono mt-1 block">Q3</span></div>
+                  <div class="text-center"><span class="text-[9px] text-sky-300 font-mono block">750</span><div class="w-6 bg-blue-600 h-20 rounded-t"></div><span class="text-[9px] text-slate-400 font-mono mt-1 block">Q4</span></div>
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-3 list-disc pl-4">
+                  <li>Usar para variações temporais ou poucas categorias (até 7).</li>
+                  <li>Manter rótulos do eixo X sempre na horizontal.</li>
+                  <li>O eixo base numérico (Y) deve obrigatoriamente iniciar em zero (0).</li>
+                </ul>
+              </div>
+
+              <div class="bg-slate-950 border border-rose-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-rose-400 font-mono block mb-2">✕ ERRADO / A EVITAR</span>
+                <span class="text-xs text-slate-300 block mb-2 font-mono">Receita por Trimestre (Eixo truncado em 400)</span>
+                <div class="h-24 flex items-end justify-around border-b border-rose-800/60 px-4 bg-rose-950/10">
+                  <div class="text-center"><div class="w-4 bg-slate-600 h-4"></div><span class="text-[8px] text-rose-400 block -rotate-45 mt-1">Jan</span></div>
+                  <div class="text-center"><div class="w-4 bg-slate-600 h-14"></div><span class="text-[8px] text-rose-400 block -rotate-45 mt-1">Fev</span></div>
+                  <div class="text-center"><div class="w-4 bg-slate-600 h-10"></div><span class="text-[8px] text-rose-400 block -rotate-45 mt-1">Mar</span></div>
+                  <div class="text-center"><div class="w-4 bg-slate-600 h-20"></div><span class="text-[8px] text-rose-400 block -rotate-45 mt-1">Abr</span></div>
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-3 list-disc pl-4">
+                  <li>Nunca inclinar rótulos no eixo horizontal para caber mais itens (utilize o Gráfico de Barra neste caso).</li>
+                  <li>Não interromper ou iniciar o eixo Y fora do zero (distorce a interpretação dos dados e fere a WCAG 2.2).</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 4: Gráfico de Gauge Semicircular -->
+        <div id="tab-gauge" class="catalog-pane hidden space-y-6">
+          <div class="bento-card rounded-3xl p-7">
+            <h4 class="text-xl font-bold text-white mb-2">Gráfico de Gauge Semicircular</h4>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              Exibe o progresso de um valor individual dentro de uma escala predefinida (ex: 0% a 100%).
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 text-xs text-slate-300">
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-emerald-400 font-bold block mb-2 uppercase">Quando Usar:</span>
+                <p>Visualização rápida de performance individual contra uma meta fixa (ex: % da meta de vendas atingida no mês, uso de cota do servidor).</p>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-rose-400 font-bold block mb-2 uppercase">O que EVITAR:</span>
+                <p>Não utilize o gauge para séries históricas ou para comparar múltiplos elementos ao mesmo tempo. Use apenas um valor corrente por widget de Gauge.</p>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-amber-400 font-bold block mb-2 uppercase">Acessibilidade (WCAG 2.2):</span>
+                <p>Não confie apenas na cor do arco (ex: vermelho para ruim, verde para bom) para transmitir se a meta foi alcançada. Exiba o valor numérico exato em texto centralizado dentro do semicírculo com tamanho relativo amplo e peso bold, juntamente com o texto descritivo do status (ex: "75% - Dentro do Esperado") (WCAG 1.4.1 Use of Color).</p>
+              </div>
+            </div>
+
+            <!-- Ilustração Gauge Refinada (Sem sobreposição, 1 seta, tags compactas) -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div class="bg-slate-950 border border-emerald-500/40 rounded-2xl p-5 flex flex-col items-center">
+                <span class="text-xs font-bold text-emerald-400 font-mono block mb-1 self-start">✓ CERTO / RECOMENDADO</span>
+                <div class="flex items-center justify-between w-full mb-1">
+                  <span class="text-[10px] font-mono text-slate-400">Meta de Vendas - Q3 2024</span>
+                  <span class="text-[9px] font-mono text-amber-300 bg-amber-500/15 border border-amber-500/30 px-1.5 py-0.5 rounded">Meta: 80%</span>
+                </div>
+
+                <div class="relative w-48 h-28 mt-1 flex items-center justify-center">
+                  <svg viewBox="0 0 120 70" class="w-full h-full overflow-visible">
+                    <path d="M 15 62 A 45 45 0 0 1 105 62" fill="none" stroke="#1E293B" stroke-width="10" stroke-linecap="round"/>
+                    <path d="M 15 62 A 45 45 0 0 1 45 22" fill="none" stroke="#DC2626" stroke-width="10" stroke-linecap="round"/>
+                    <path d="M 45 22 A 45 45 0 0 1 75 22" fill="none" stroke="#D97706" stroke-width="10"/>
+                    <path d="M 75 22 A 45 45 0 0 1 105 62" fill="none" stroke="#059669" stroke-width="10" stroke-linecap="round"/>
+                    <line x1="93" y1="26" x2="98" y2="21" stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="1,1"/>
+                    <polygon points="92,30 99,23 95,20" fill="#38BDF8"/>
+                    <circle cx="92" cy="30" r="2.5" fill="#FFFFFF"/>
+                  </svg>
+                  <div class="absolute inset-x-0 bottom-1 flex flex-col items-center justify-center pointer-events-none">
+                    <span class="text-2xl font-extrabold text-white font-mono tracking-tight leading-none">75%</span>
+                    <span class="text-[9px] font-medium text-emerald-400 mt-1 bg-emerald-950/60 border border-emerald-500/25 px-1.5 py-0.5 rounded-md">Dentro do Esperado</span>
+                  </div>
+                </div>
+                <div class="flex justify-between w-full px-4 text-[10px] font-mono text-slate-400 -mt-1">
+                  <span>0%</span>
+                  <span>100%</span>
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-3 list-disc pl-4 self-start">
+                  <li>Exibir o valor numérico exato centralizado em destaque com o texto de status descritivo.</li>
+                  <li>Não confiar apenas na cor do arco para indicar se a meta foi atingida (WCAG 1.4.1).</li>
+                  <li>Utilizar apenas um valor corrente por widget contra uma meta fixa.</li>
+                </ul>
+              </div>
+
+              <div class="bg-slate-950 border border-rose-500/40 rounded-2xl p-5 flex flex-col justify-between">
+                <div>
+                  <span class="text-xs font-bold text-rose-400 font-mono block mb-2">✕ ERRADO / A EVITAR</span>
+                  <span class="text-xs text-slate-300 block mb-3 font-mono">Comparativo de Múltiplas Metas no mesmo Gauge</span>
+                  <div class="p-4 bg-slate-900 border border-slate-800 rounded-xl text-center space-y-2">
+                    <span class="text-xs text-rose-300 font-mono">Arco sem rótulo textual • Apenas cor</span>
+                    <div class="w-full bg-slate-800 h-3 rounded-full overflow-hidden flex">
+                      <div class="bg-emerald-500 w-1/3"></div>
+                      <div class="bg-amber-500 w-1/3"></div>
+                      <div class="bg-rose-500 w-1/3"></div>
+                    </div>
+                  </div>
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-4 list-disc pl-4">
+                  <li>Não utilizar o gauge para apresentar séries históricas ou comparações de múltiplos elementos.</li>
+                  <li>Evitar depender exclusivamente da cor para transmitir o status de cumprimento da meta.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 5: Gráfico de Linha -->
+        <div id="tab-linha" class="catalog-pane hidden space-y-6">
+          <div class="bento-card rounded-3xl p-7">
+            <h4 class="text-xl font-bold text-white mb-2">Gráfico de Linha</h4>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              Conecta pontos de dados contínuos em uma escala comum.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 text-xs text-slate-300">
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-emerald-400 font-bold block mb-2 uppercase">Quando Usar:</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Análise de séries temporais contínuas (tendências ao longo de dias, semanas, meses, anos).</li>
+                  <li>Comparações de tendências entre múltiplos grupos (máximo de 4 linhas simultâneas).</li>
+                </ul>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-rose-400 font-bold block mb-2 uppercase">O que EVITAR:</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Não utilize gráfico de linha para categorias discretas que não tenham ordem sequencial lógica (ex: Filial A, Filial B, Filial C). Para isso, utilize Coluna ou Barra.</li>
+                </ul>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-amber-400 font-bold block mb-2 uppercase">Acessibilidade (WCAG 2.2):</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Indicadores de Forma (Markers): Todas as linhas devem possuir marcadores em cada ponto de dados (círculos, quadrados, triângulos) e/ou padrões de traço (linha contínua, tracejada), além da cor. Isso é imprescindível para usuários daltônicos identificarem a qual série a linha pertence (WCAG 1.4.1 Use of Color).</li>
+                  <li>Espessura mínima recomendada para a linha: 2px a 3px.</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Ilustração Linha -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div class="bg-slate-950 border border-emerald-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-emerald-400 font-mono block mb-2">✓ CERTO / RECOMENDADO</span>
+                <span class="text-xs text-slate-300 block mb-2">Tendência Mensal de Vendas (Círculos, Quadrados, Losangos)</span>
+                <svg viewBox="0 0 180 70" class="w-full h-24">
+                  <line x1="10" y1="60" x2="170" y2="60" stroke="#334155"/>
+                  <path d="M 15,50 L 55,40 L 95,25 L 135,32 L 165,15" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+                  <circle cx="15" cy="50" r="3.5" fill="#2563EB"/><circle cx="55" cy="40" r="3.5" fill="#2563EB"/><circle cx="95" cy="25" r="3.5" fill="#2563EB"/><circle cx="135" cy="32" r="3.5" fill="#2563EB"/><circle cx="165" cy="15" r="3.5" fill="#2563EB"/>
+                  <path d="M 15,58 L 55,50 L 95,45 L 135,38 L 165,28" fill="none" stroke="#059669" stroke-width="2" stroke-dasharray="4,3"/>
+                  <rect x="13" y="56" width="4" height="4" fill="#059669"/><rect x="53" y="48" width="4" height="4" fill="#059669"/><rect x="93" y="43" width="4" height="4" fill="#059669"/><rect x="133" y="36" width="4" height="4" fill="#059669"/><rect x="163" y="26" width="4" height="4" fill="#059669"/>
+                </svg>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-2 list-disc pl-4">
+                  <li>Usar para séries temporais contínuas (máximo de 4 linhas simultâneas).</li>
+                  <li>Utilizar marcadores de forma (círculos, quadrados) ou padrões de traço para diferenciar séries (WCAG 1.4.1).</li>
+                  <li>Manter espessura da linha entre 2px e 3px.</li>
+                </ul>
+              </div>
+
+              <div class="bg-slate-950 border border-rose-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-rose-400 font-mono block mb-2">✕ ERRADO / A EVITAR</span>
+                <span class="text-xs text-slate-300 block mb-2">Vendas por Filial (Séries discretas sem ordem sequencial)</span>
+                <svg viewBox="0 0 180 70" class="w-full h-24">
+                  <path d="M 15,25 L 55,55 L 95,20 L 135,50 L 165,22" fill="none" stroke="#64748B" stroke-width="1"/>
+                  <path d="M 15,45 L 55,20 L 95,35 L 135,25 L 165,45" fill="none" stroke="#475569" stroke-width="1"/>
+                </svg>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-2 list-disc pl-4">
+                  <li>Não utilizar gráfico de linha para categorias discretas sem ordem sequencial (utilize Coluna ou Barra).</li>
+                  <li>Evitar linhas diferenciadas apenas por cor sem marcadores visuais de forma.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 6: Gráfico de Pizza e Gráfico Rosca -->
+        <div id="tab-pizza-rosca" class="catalog-pane hidden space-y-6">
+          <div class="bento-card rounded-3xl p-7">
+            <h4 class="text-xl font-bold text-white mb-2">Gráfico de Pizza e Gráfico Rosca</h4>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              Exibem a proporção das partes em relação ao todo (soma de 100%).
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-4 text-xs text-slate-300">
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-emerald-400 font-bold block mb-2 uppercase">Quando Usar:</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Exclusivamente para ilustrar partes estáticas de um todo com poucas categorias.</li>
+                  <li>O gráfico de Rosca é preferível ao de Pizza, pois o espaço central vazio permite a inclusão do valor total numérico acumulado.</li>
+                </ul>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-rose-400 font-bold block mb-2 uppercase">O que EVITAR:</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>NUNCA utilize para comparar dados. O cérebro humano é péssimo para comparar áreas angulares e volumes.</li>
+                  <li>NUNCA ultrapasse 5 fatias. Gráficos de pizza com muitas fatias tornam-se ilegíveis e geram legendas poluídas.</li>
+                  <li>Fatias menores do que 10% do total inviabilizam a percepção visual direta.</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2 text-xs text-slate-300">
+              <div class="bg-slate-900/90 border border-blue-500/30 p-4 rounded-2xl">
+                <span class="font-mono text-sky-400 font-bold block mb-2 uppercase">Regra Técnica de Negócio (PO UI):</span>
+                <p>Se um item for menor que 10% e existirem múltiplos itens pequenos, agrupe-os obrigatoriamente em uma única fatia chamada "Outros". O detalhamento desses itens deve ser disponibilizado através de uma tabela de apoio ou drill-down.</p>
+              </div>
+              <div class="bg-slate-900/90 border border-amber-500/30 p-4 rounded-2xl">
+                <span class="font-mono text-amber-400 font-bold block mb-2 uppercase">Acessibilidade (WCAG 2.2):</span>
+                <ul class="space-y-1 list-disc pl-4">
+                  <li>Não coloque rótulos soltos fora do gráfico ligados por linhas finas ("linhas de chamada"). Mantenha a legenda clara com rótulo + porcentagem numérico visível (ex: "Aprovações ERP: 45%").</li>
+                  <li>A separação entre as fatias deve conter um traço (stroke) de divisão branco de no mínimo 2px para diferenciar fatias adjacentes com tons similares (WCAG 1.4.11 Non-text Contrast).</li>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Comparativo Visual -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div class="bg-slate-950 border border-emerald-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-emerald-400 font-mono block mb-2">✓ CERTO / RECOMENDADO</span>
+                <span class="text-xs text-slate-300 block mb-2">Distribuição de Processos</span>
+                <div class="flex items-center gap-4">
+                  <div class="relative w-20 h-20 shrink-0">
+                    <svg viewBox="0 0 36 36" class="w-20 h-20">
+                      <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#0052CC" stroke-width="5" stroke-dasharray="45, 100"/>
+                      <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#059669" stroke-width="5" stroke-dasharray="25, 100" stroke-dashoffset="-45"/>
+                      <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#D97706" stroke-width="5" stroke-dasharray="15, 100" stroke-dashoffset="-70"/>
+                      <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#7C3AED" stroke-width="5" stroke-dasharray="10, 100" stroke-dashoffset="-85"/>
+                      <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="#64748B" stroke-width="5" stroke-dasharray="5, 100" stroke-dashoffset="-95"/>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                      <span class="text-[7px] text-slate-400">Total</span>
+                      <span class="text-xs font-bold text-white font-mono">1.240</span>
+                    </div>
+                  </div>
+                  <div class="text-[10px] space-y-0.5 text-slate-300 font-mono">
+                    <p><strong class="text-blue-400">Aprovações ERP:</strong> 45%</p>
+                    <p><strong class="text-emerald-400">Relatórios:</strong> 25%</p>
+                    <p><strong class="text-amber-400">Cadastros:</strong> 15%</p>
+                    <p><strong class="text-purple-400">Auditoria:</strong> 10%</p>
+                    <p><strong class="text-slate-400">Outros:</strong> 5%</p>
+                  </div>
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-3 list-disc pl-4">
+                  <li>Dar preferência ao Gráfico de Rosca para exibir o valor total acumulado no centro.</li>
+                  <li>Limitar a no máximo 5 fatias e agrupar itens menores que 10% na categoria "Outros".</li>
+                  <li>Usar stroke de separação branco de no mínimo 2px entre as fatias (WCAG 1.4.11).</li>
+                </ul>
+              </div>
+
+              <div class="bg-slate-950 border border-rose-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-rose-400 font-mono block mb-2">✕ ERRADO / A EVITAR</span>
+                <span class="text-xs text-slate-300 block mb-2">Distribuição de Processos (Múltiplas divisões e linhas finas de chamada)</span>
+                <div class="flex items-center gap-3">
+                  <div class="w-20 h-20 rounded-full bg-slate-700 border-2 border-slate-600 flex items-center justify-center text-[10px] text-slate-400 font-mono text-center">
+                    > 15 fatias
+                  </div>
+                  <div class="text-[10px] text-rose-300">
+                    Dificuldade de Leitura: Múltiplas divisões sem agrupamento geram poluição de linhas de chamada externas.
+                  </div>
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-3 list-disc pl-4">
+                  <li>Nunca ultrapassar 5 fatias ou utilizar para comparar séries de dados.</li>
+                  <li>Evitar fatias menores que 10% soltas sem agrupamento em "Outros".</li>
+                  <li>Não utilizar linhas de chamada externas para conectar rótulos ao gráfico.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ABA 7: Gráfico de Radar -->
+        <div id="tab-radar" class="catalog-pane hidden space-y-6">
+          <div class="bento-card rounded-3xl p-7">
+            <h4 class="text-xl font-bold text-white mb-2">Gráfico de Radar</h4>
+            <p class="text-slate-300 text-sm leading-relaxed mb-4">
+              Exibe dados de múltiplas variáveis quantitativas mapeadas em eixos a partir de um ponto central.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-4 text-xs text-slate-300">
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-emerald-400 font-bold block mb-2 uppercase">Quando Usar:</span>
+                <p>Avaliar e apresentar um perfil multi-atributo (ex: Avaliação de competências, análise de conformidade de processos corporativos em 5 eixos distintos).</p>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-rose-400 font-bold block mb-2 uppercase">O que EVITAR:</span>
+                <p>Não utilize para mais de 2 entidades sobrepostas ao mesmo tempo, pois a área sombreada resulta em sobreposição opaca de difícil leitura.</p>
+              </div>
+              <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl">
+                <span class="font-mono text-amber-400 font-bold block mb-2 uppercase">Acessibilidade (WCAG 2.2):</span>
+                <p>Devido à alta complexidade matemática do layout visual de teia de aranha, garanta que os leitores de tela tenham acesso direto a uma tabela HTML estática equivalente (&lt;table&gt;) com os atributos e notas mapeados via atributo aria-describedby (WCAG 1.1.1 Non-text Content).</p>
+              </div>
+            </div>
+
+            <!-- Comparativo Radar -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div class="bg-slate-950 border border-emerald-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-emerald-400 font-mono block mb-2">✓ CERTO / RECOMENDADO</span>
+                <span class="text-xs text-slate-300 block mb-2">Avaliação de Competências (Equipe A c/ Círculo • Equipe B c/ Quadrado)</span>
+                <div class="flex justify-center py-2">
+                  <svg class="w-36 h-28" viewBox="0 0 100 80">
+                    <polygon points="50,5 90,28 75,75 25,75 10,28" fill="none" stroke="#334155" stroke-width="1"/>
+                    <polygon points="50,20 75,34 65,60 35,60 25,34" fill="none" stroke="#334155" stroke-width="1"/>
+                    <polygon points="50,12 82,30 68,52 30,68 18,32" fill="rgba(37, 99, 235, 0.25)" stroke="#38BDF8" stroke-width="2"/>
+                    <circle cx="50" cy="12" r="2.5" fill="#38BDF8"/>
+                    <circle cx="82" cy="30" r="2.5" fill="#38BDF8"/>
+                  </svg>
+                </div>
+                <div class="text-[11px] text-sky-400 font-mono text-center">Ver tabela de dados (Acessível)</div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-3 list-disc pl-4">
+                  <li>Usar para avaliar e apresentar perfis multi-atributos (máximo de 2 entidades sobrepostas).</li>
+                  <li>Manter transparência nas áreas sombreadas para permitir a leitura clara da sobreposição.</li>
+                  <li>Garantir alternativa em tabela textual equivalente para acessibilidade (WCAG 1.1.1).</li>
+                </ul>
+              </div>
+
+              <div class="bg-slate-950 border border-rose-500/40 rounded-2xl p-4">
+                <span class="text-xs font-bold text-rose-400 font-mono block mb-2">✕ ERRADO / A EVITAR</span>
+                <span class="text-xs text-slate-300 block mb-2">Avaliação de Competências (> 4 entidades sobrepostas)</span>
+                <div class="h-28 flex items-center justify-center text-center text-xs text-rose-300 font-mono">
+                  Sobreposição opaca em múltiplos eixos impede distinção.
+                </div>
+                <ul class="text-[11px] text-slate-400 space-y-1 mt-3 list-disc pl-4">
+                  <li>Não utilizar para mais de 2 entidades sobrepostas ao mesmo tempo.</li>
+                  <li>Evitar sobreposição opaca de difícil leitura dos eixos.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <h3 class="text-2xl font-bold text-white tracking-tight">
+          Diretrizes de Formatação Técnica
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- 1.1.3.1 Arredondamento e Densidade de Números -->
+        <div class="bento-card rounded-3xl p-7 space-y-4">
+          <h4 class="text-lg font-bold text-white">
+            Arredondamento e Densidade de Números
+          </h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Não sobrecarregue a interface da home com casas decimais irrelevantes para o nível executivo/estratégico.
+          </p>
+
+          <!-- Tabela de Conversão Exata -->
+          <div class="bg-slate-950 border border-slate-800 rounded-2xl p-4 font-mono text-xs">
+            <div class="grid grid-cols-2 gap-2 pb-2 border-b border-slate-800 text-slate-400">
+              <span>[INCORRETO]</span>
+              <span class="text-emerald-400 font-bold">[CORRETO]</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 py-2 border-b border-slate-900 text-slate-200">
+              <span class="text-rose-400">R$ 850.010,25</span>
+              <span class="text-emerald-300 font-bold">850 mil</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-2 text-slate-200">
+              <span class="text-rose-400">98,432%</span>
+              <span class="text-emerald-300 font-bold">98,4%</span>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <span class="text-xs font-mono text-sky-400 uppercase font-bold block">Aplicações Práticas:</span>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc pl-4">
+              <li><strong>Monetário Grande:</strong> Omitir centavos e abreviar na casa dos milhares/milhões (R$ 850k, R$ 2.4M).</li>
+              <li><strong>Porcentagem:</strong> Utilize no máximo uma casa decimal (12,4%). Se o espaço for reduzido, arredonde para o inteiro mais próximo (12%).</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- 1.1.3.2 Interatividade: Regras de Implementação para DEVs -->
+        <div class="bento-card rounded-3xl p-7 space-y-4">
+          <h4 class="text-lg font-bold text-white">
+            Interatividade: Regras de Implementação para DEVs
+          </h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            Os componentes PO UI devem ter as seguintes capacidades interativas configuradas por padrão, quando houverem as informações devidas:
+          </p>
+
+          <div class="space-y-3 pt-1">
+            <!-- 1. Filtro por Clique ilustrado -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+              <strong class="text-xs font-mono text-sky-400 block">Filtro por Clique:</strong>
+              <p class="text-xs text-slate-300">Clicar numa barra/fatia aplica a dimensão como filtro temporário para o resto do dashboard.</p>
+              
+              <!-- Ilustração: Clique em barra gerando chip de filtro ativo -->
+              <div class="bg-slate-900/90 border border-blue-500/20 rounded-lg p-2.5 flex items-center justify-between text-[11px] font-mono">
+                <div class="flex items-center gap-2">
+                  <div class="w-16 bg-blue-600 h-2.5 rounded"></div>
+                  <span class="text-white">Vendas Online</span>
+                </div>
+                <div class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-500/20 text-sky-300 border border-blue-500/40 text-[10px]">
+                  <span>Filtrado por: Vendas Online</span>
+                  <span class="cursor-pointer text-slate-400 hover:text-white">&times;</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Tooltip Limpo ilustrado -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+              <strong class="text-xs font-mono text-sky-400 block">Tooltip Limpo:</strong>
+              <p class="text-xs text-slate-300">Exibir valor exato, categoria e variação %. Deve surgir sem delay e acompanhar o foco de tecla.</p>
+              
+              <!-- Ilustração: Tooltip flutuante com dados precisos -->
+              <div class="bg-slate-900/90 border border-slate-700 rounded-lg p-2.5 relative">
+                <div class="inline-block bg-[#0B192C] border border-blue-400/40 shadow-lg p-2 rounded-lg text-[10px] font-mono space-y-0.5">
+                  <div class="text-slate-400">Categoria: <span class="text-white font-bold">Vendas Online</span></div>
+                  <div class="text-slate-400">Valor: <span class="text-sky-300 font-bold">R$ 850.000</span></div>
+                  <div class="text-emerald-400 font-semibold">Variação: +12,4% (vs. mês anterior)</div>
+                </div>
+                <div class="w-2 h-2 bg-[#0B192C] border-r border-b border-blue-400/40 transform rotate-45 -mt-1 ml-4"></div>
+              </div>
+            </div>
+
+            <!-- 3. Drill-down ilustrado -->
+            <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 space-y-2">
+              <strong class="text-xs font-mono text-sky-400 block">Drill-down:</strong>
+              <p class="text-xs text-slate-300">Clicar em uma barra consolidadora navega ou abre visão da categoria filtrada por subitens.</p>
+              
+              <!-- Ilustração: Navegação hierárquica por subitens -->
+              <div class="bg-slate-900/90 border border-slate-800 rounded-lg p-2.5 flex items-center justify-between text-[11px] font-mono">
+                <span class="text-slate-300">Nacional (Brasil)</span>
+                <span class="text-sky-400">&rarr;</span>
+                <span class="text-sky-300 font-bold">Região Sudeste</span>
+                <span class="text-sky-400">&rarr;</span>
+                <span class="text-emerald-400">Filial Belo Horizonte (12 Lojas)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="acessibilidade" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-sky-400 uppercase tracking-widest font-bold block">1.1.4</span>
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
+          Guia Definitivo de Acessibilidade nos Gráficos (WCAG 2.2)
+        </h3>
+        <p class="text-slate-300 text-sm mt-2">
+          Abaixo estão dispostos os pontos técnicos essenciais extraídos das recomendações internacionais de acessibilidade, com os devidos apontamentos diretos do guia oficial da WCAG.
+        </p>
+      </div>
+
+      <div class="space-y-4">
+        <h4 class="text-lg font-bold text-white flex items-center gap-2">
+          <span class="w-3 h-3 rounded-full bg-emerald-400"></span>
+          Checklist e Implementação para Engenharia
+        </h4>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+
+          <!-- WCAG 1.1.1 Ilustrado -->
+          <div class="bento-card rounded-2xl p-5 space-y-3">
+            <span class="text-xs font-mono bg-blue-500/20 text-sky-300 px-2 py-0.5 rounded border border-blue-500/30">Nível A</span>
+            <h5 class="text-sm font-bold text-white">Conteúdo Não Textual (Nível A) - WCAG 1.1.1:</h5>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Usuários de leitores de tela não conseguem interpretar gráficos canvas/SVG. Todo container de gráfico deve conter a tag <code class="text-sky-300">&lt;svg role="img" aria-label="[Título do Gráfico e Resumo]"&gt;</code> ou possuir uma alternativa de dados via botão "Exibir como Tabela" visível ou acessível por teclado.
+            </p>
+
+            <!-- Ilustração 2D Leitor de Tela -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[10px] font-mono space-y-1.5">
+              <div class="flex items-center justify-between text-slate-400">
+                <span class="flex items-center gap-1.5">
+                  <svg class="w-3.5 h-3.5 text-sky-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" /></svg>
+                  Leitor de Tela (NVDA / JAWS)
+                </span>
+                <span class="text-emerald-400">Acessível</span>
+              </div>
+              <div class="p-2 rounded bg-slate-900 border border-slate-800 text-sky-300">
+                "Imagem. Vendas do trimestre: 75% da meta atingida."
+              </div>
+              <div class="flex items-center justify-between text-slate-400 pt-1">
+                <span>&lt;svg role="img" ...&gt;</span>
+                <span class="px-2 py-0.5 rounded bg-slate-800 text-white border border-slate-700">Exibir como Tabela</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- WCAG 1.4.1 Ilustrado -->
+          <div class="bento-card rounded-2xl p-5 space-y-3">
+            <span class="text-xs font-mono bg-blue-500/20 text-sky-300 px-2 py-0.5 rounded border border-blue-500/30">Nível A</span>
+            <h5 class="text-sm font-bold text-white">Uso da Cor (Nível A) - WCAG 1.4.1:</h5>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Pessoas com daltonismo não conseguem distinguir séries diferenciadas apenas por cor. Nunca dependa só da cor: linhas devem usar traçados/formatos de pontos diferentes, barras sobrepostas devem ter padrões visuais e gráficos de status exigem texto e ícones acoplados.
+            </p>
+
+            <!-- Ilustração 2D Daltonismo Protanopia -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[10px] font-mono space-y-1.5">
+              <div class="flex justify-between text-slate-400">
+                <span>Simulação Protanopia</span>
+                <span class="text-emerald-400">Marcador + Traço</span>
+              </div>
+              <svg viewBox="0 0 160 38" class="w-full h-9">
+                <line x1="5" y1="28" x2="155" y2="28" stroke="#334155" stroke-width="0.8"/>
+                <path d="M 10,24 L 50,14 L 100,20 L 150,8" fill="none" stroke="#2563EB" stroke-width="2"/>
+                <circle cx="10" cy="24" r="2.5" fill="#2563EB"/>
+                <circle cx="50" cy="14" r="2.5" fill="#2563EB"/>
+                <circle cx="100" cy="20" r="2.5" fill="#2563EB"/>
+                <circle cx="150" cy="8" r="2.5" fill="#2563EB"/>
+                <path d="M 10,18 L 50,26 L 100,12 L 150,22" fill="none" stroke="#059669" stroke-width="1.8" stroke-dasharray="3,2"/>
+                <rect x="8" y="16" width="4" height="4" fill="#059669"/>
+                <rect x="48" y="24" width="4" height="4" fill="#059669"/>
+                <rect x="98" y="10" width="4" height="4" fill="#059669"/>
+                <rect x="148" y="20" width="4" height="4" fill="#059669"/>
+              </svg>
+              <div class="flex justify-between text-slate-400 text-[9px]">
+                <span class="text-sky-300">● Meta (Círculo/Liso)</span>
+                <span class="text-emerald-300">■ Real (Quadrado/Tracejado)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- WCAG 1.4.3 Ilustrado -->
+          <div class="bento-card rounded-2xl p-5 space-y-3">
+            <span class="text-xs font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">Nível AA</span>
+            <h5 class="text-sm font-bold text-white">Contraste Mínimo (Texto) (Nível AA) - WCAG 1.4.3:</h5>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Rótulos de eixos, títulos, valores e legendas precisam ter razão de contraste de no mínimo 4.5:1 contra o fundo do card para evitar dificuldades de leitura.
+            </p>
+
+            <!-- Painel de Contraste Numérico Real -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[10px] font-mono space-y-1">
+              <div class="flex justify-between items-center p-1 rounded bg-rose-950/20 border border-rose-500/30">
+                <span class="text-slate-400">#E2E8F0 (Slate 200)</span>
+                <span class="text-rose-400 font-bold">1.2:1 ✕ REPROVADO</span>
+              </div>
+              <div class="flex justify-between items-center p-1 rounded bg-emerald-950/20 border border-emerald-500/30">
+                <span class="text-slate-300">#334155 (Slate 700)</span>
+                <span class="text-emerald-400 font-bold">9.7:1 ✓ OK</span>
+              </div>
+              <div class="flex justify-between items-center p-1 rounded bg-emerald-950/20 border border-emerald-500/30">
+                <span class="text-white">#0F172A (Slate 900)</span>
+                <span class="text-emerald-400 font-bold">19.0:1 ✓ OK</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- WCAG 1.4.11 Ilustrado -->
+          <div class="bento-card rounded-2xl p-5 space-y-3">
+            <span class="text-xs font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">Nível AA</span>
+            <h5 class="text-sm font-bold text-white">Contraste Não Textual (Nível AA) - WCAG 1.4.11:</h5>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Elementos visuais dos dados (barras, linhas, áreas preenchidas, fatias de pizza ou ponteiros) devem apresentar contraste de no mínimo 3:1 em relação ao fundo e a elementos vizinhos.
+            </p>
+
+            <!-- Ilustração 2D de Divisão Branca 2px entre Elementos -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 text-[10px] font-mono space-y-1.5">
+              <div class="flex justify-between text-slate-400">
+                <span>Alvos vs Fundo (#FFFFFF)</span>
+                <span class="text-emerald-400 font-bold">&ge; 3:1 Nível AA</span>
+              </div>
+              <div class="flex items-center gap-1.5 h-6">
+                <div class="h-full flex-1 bg-[#0052CC] rounded-l flex items-center justify-center text-[9px] text-white">6.5:1</div>
+                <div class="w-1 h-full bg-white"></div>
+                <div class="h-full flex-1 bg-[#059669] flex items-center justify-center text-[9px] text-white">3.7:1</div>
+                <div class="w-1 h-full bg-white"></div>
+                <div class="h-full flex-1 bg-[#D97706] rounded-r flex items-center justify-center text-[9px] text-white">4.2:1</div>
+              </div>
+              <div class="text-[9px] text-slate-400 text-center">Divisão branca de no mínimo 2px entre fatias</div>
+            </div>
+          </div>
+
+          <!-- WCAG 2.1.1 Ilustrado -->
+          <div class="bento-card rounded-2xl p-5 space-y-3">
+            <span class="text-xs font-mono bg-blue-500/20 text-sky-300 px-2 py-0.5 rounded border border-blue-500/30">Nível A</span>
+            <h5 class="text-sm font-bold text-white">Teclado (Nível A) - WCAG 2.1.1:</h5>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Todos os elementos interativos do gráfico devem ser navegáveis via tecla Tab e Setas, disparando o tooltip sem a necessidade do mouse para atender usuários com deficiência motora.
+            </p>
+
+            <!-- Ilustração 2D: Teclas Tab + Setas com Tooltip ativo na Barra Março -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[10px] font-mono space-y-2">
+              <div class="flex items-center justify-center gap-2">
+                <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-white font-bold">Tab</span>
+                <span class="text-slate-400">+</span>
+                <span class="px-2 py-1 rounded bg-slate-800 border border-slate-700 text-white font-bold">&larr; &rarr;</span>
+              </div>
+              <div class="h-14 flex items-end justify-around border-b border-slate-800 px-2 pt-2 relative">
+                <div class="w-3 bg-slate-700 h-6 rounded-t"></div>
+                <div class="w-3 bg-slate-700 h-9 rounded-t"></div>
+                <!-- Barra com foco ativo -->
+                <div class="w-4 bg-blue-500 h-12 rounded-t ring-2 ring-white ring-offset-2 ring-offset-slate-950 relative">
+                  <div class="absolute -top-7 -left-10 bg-slate-900 border border-sky-400 text-[8px] text-white px-1.5 py-0.5 rounded whitespace-nowrap shadow-lg">
+                    Março: R$ 48.250
+                  </div>
+                </div>
+                <div class="w-3 bg-slate-700 h-5 rounded-t"></div>
+                <div class="w-3 bg-slate-700 h-10 rounded-t"></div>
+              </div>
+              <div class="flex justify-around text-[9px] text-slate-400">
+                <span>Jan</span><span>Fev</span><span class="text-sky-400 font-bold">Mar</span><span>Abr</span><span>Mai</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- WCAG 2.4.7 Ilustrado -->
+          <div class="bento-card rounded-2xl p-5 space-y-3">
+            <span class="text-xs font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">Nível AA</span>
+            <h5 class="text-sm font-bold text-white">Foco Visível (Nível AA) - WCAG 2.4.7:</h5>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Elementos focados via teclado devem exibir um anel de foco visível com contraste de no mínimo 3:1 (ex: <code class="text-sky-300 font-mono">outline: 2px solid #0052CC; outline-offset: 2px;</code>).
+            </p>
+
+            <!-- Ilustração 2D: Demonstração de foco visível PO UI -->
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-2 text-[10px] font-mono">
+              <div class="flex items-center gap-2">
+                <button class="px-2.5 py-1.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">Visualizar dados</button>
+                <button class="px-2.5 py-1.5 rounded bg-blue-600 text-white text-[10px] font-bold shadow-lg" style="outline: 2px solid #38BDF8; outline-offset: 2px;">Exportar relatório</button>
+                <button class="px-2.5 py-1.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[10px]">Filtrar</button>
+              </div>
+              <div class="p-2 bg-slate-900 rounded border border-slate-800 text-[9px] text-sky-300">
+                CSS: outline: 2px solid #0052CC; outline-offset: 2px;
+              </div>
+            </div>
+          </div>
+
+          <!-- WCAG 2.5.8 Ilustrado -->
+          <div class="bento-card rounded-2xl p-5 space-y-3 md:col-span-2 lg:col-span-3">
+            <span class="text-xs font-mono bg-emerald-500/20 text-emerald-300 px-2 py-0.5 rounded border border-emerald-500/30">Nível AA</span>
+            <h5 class="text-sm font-bold text-white">Tamanho do Alvo de Toque (Nível AA) - WCAG 2.5.8:</h5>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Pontos de interatividade em linhas ou barras pequenas devem ter uma hitbox invisível ampliada de no mínimo 24x24px para evitar cliques equivocados em dispositivos móveis.
+            </p>
+
+            <!-- Ilustração 2D: Hitbox Ampliada 24x24px -->
+            <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div class="relative w-48 h-20 flex items-center justify-center">
+                <svg viewBox="0 0 180 60" class="w-full h-full">
+                  <path d="M 10,40 L 50,25 L 90,45 L 140,15 L 170,30" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+                  <circle cx="90" cy="45" r="3" fill="#38BDF8"/>
+                  <rect x="78" y="33" width="24" height="24" fill="rgba(217, 119, 6, 0.15)" stroke="#F59E0B" stroke-width="1.2" stroke-dasharray="2,2"/>
+                  <text x="90" y="27" fill="#F59E0B" font-size="8" font-family="monospace" text-anchor="middle">24x24px</text>
+                </svg>
+              </div>
+              <div class="text-[11px] font-mono text-slate-300 bg-slate-900/90 border border-amber-500/30 p-3 rounded-xl max-w-md">
+                <span class="text-amber-400 font-bold block mb-1">Área de Toque Mínima Protegida</span>
+                A hitbox invisível de 24x24px evita que o usuário toque inadvertidamente em séries adjacentes em telas de smartphones e tablets.
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="matriz" class="space-y-6">
+      <div class="bento-card rounded-3xl p-8 border-2 border-blue-500/30 relative overflow-hidden">
+        <div class="max-w-3xl mb-8 space-y-2">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold block">1.1.5</span>
+          <h3 class="text-2xl sm:text-3xl font-extrabold text-white">
+            Matriz de Decisão Rápida para DEVs (Qual Gráfico Escolher?)
+          </h3>
+          <p class="text-slate-300 text-sm">
+            Para evitar a implementação de tipos de gráficos incorretos nos módulos da Nova Home, utilize este fluxo de decisão simplificado:
+          </p>
+        </div>
+
+        <!-- Seletor das 5 Perguntas da Matriz -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-8" id="matrixButtons">
+          <button onclick="updateMatrix('tempo', this)" data-matrix-key="tempo" class="matrix-btn active px-4 py-3 rounded-2xl bg-blue-600 text-white font-medium text-xs text-left border border-blue-400/40 shadow-lg shadow-blue-600/30 transition focus-wcag">
+            <span class="block text-[10px] text-blue-200 uppercase font-mono">1.1.5.1</span>
+            <strong>Ao longo do TEMPO?</strong>
+          </button>
+          <button onclick="updateMatrix('comparar', this)" data-matrix-key="comparar" class="matrix-btn px-4 py-3 rounded-2xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs text-left border border-slate-700 transition focus-wcag">
+            <span class="block text-[10px] text-slate-400 uppercase font-mono">1.1.5.2</span>
+            <strong>COMPARAR categorias?</strong>
+          </button>
+          <button onclick="updateMatrix('meta', this)" data-matrix-key="meta" class="matrix-btn px-4 py-3 rounded-2xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs text-left border border-slate-700 transition focus-wcag">
+            <span class="block text-[10px] text-slate-400 uppercase font-mono">1.1.5.3</span>
+            <strong>META fixa?</strong>
+          </button>
+          <button onclick="updateMatrix('proporcao', this)" data-matrix-key="proporcao" class="matrix-btn px-4 py-3 rounded-2xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs text-left border border-slate-700 transition focus-wcag">
+            <span class="block text-[10px] text-slate-400 uppercase font-mono">1.1.5.4</span>
+            <strong>PROPORÇÃO (Soma=100%)?</strong>
+          </button>
+          <button onclick="updateMatrix('perfil', this)" data-matrix-key="perfil" class="matrix-btn px-4 py-3 rounded-2xl bg-slate-800 text-slate-300 hover:text-white font-medium text-xs text-left border border-slate-700 transition focus-wcag">
+            <span class="block text-[10px] text-slate-400 uppercase font-mono">1.1.5.5</span>
+            <strong>PERFIL MULTI-ATRIBUTO?</strong>
+          </button>
+        </div>
+
+        <!-- Painel Dinâmico da Matriz -->
+        <div id="matrixResult" class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8">
+          <!-- Conteúdo alimentado pelo script -->
+        </div>
+      </div>
+    </section>
+
+    <section id="hierarquia" class="space-y-8">
+      <div class="border-b border-slate-800 pb-4">
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Diretrizes de Hierarquia da Informação
+        </h3>
+        <h4 class="text-base font-semibold text-sky-400 mt-1">
+          2.1 Princípios Fundamentais de Hierarquia
+        </h4>
+        <p class="text-slate-300 text-sm mt-2">
+          Cada elemento na Home deve ter um propósito claro para a tomada de decisão da persona (o principal usuário desta tela do sistema, seja ela estratégica ou operacional). Tudo o que for considerado "ruído" deve ser eliminado seguindo os princípios fundamentais a seguir.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- 2.1.1 Regra da Tela Única -->
+        <div class="bento-card rounded-3xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">2.1.1</span>
+          <h4 class="text-lg font-bold text-white">Regra da Tela Única</h4>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            A Home deve exibir as informações críticas necessárias em uma única tela. Evite a necessidade de rolagem excessiva (scroll), por gerar sobrecarga cognitiva no usuário. A recomendação é que todos os dados essenciais estejam visíveis ao carregar, sem necessidade de rolagem, algo que também elimina o excesso de conteúdo.
+          </p>
+
+          <!-- Ilustração Comparativa: Rolagem Excessiva vs Compacto -->
+          <div class="grid grid-cols-2 gap-2 pt-2 text-[9px] font-mono">
+            <div class="bg-rose-950/20 border border-rose-500/30 p-2 rounded-xl text-center space-y-1">
+              <span class="text-rose-400 block font-bold">✕ Rolagem Excessiva</span>
+              <div class="h-16 bg-slate-900 border border-dashed border-rose-700/50 rounded flex flex-col gap-1 p-1 overflow-hidden">
+                <div class="h-3 bg-slate-800 rounded"></div>
+                <div class="h-6 bg-slate-800 rounded"></div>
+                <div class="h-6 bg-slate-800 rounded"></div>
+                <div class="h-6 bg-slate-800 rounded opacity-40"></div>
+              </div>
+              <span class="text-rose-300 block text-[8px]">Sobrecarga Cognitiva</span>
+            </div>
+
+            <div class="bg-emerald-950/20 border border-emerald-500/30 p-2 rounded-xl text-center space-y-1">
+              <span class="text-emerald-400 block font-bold">✓ Tela Única / Compacto</span>
+              <div class="h-16 bg-slate-950 border border-emerald-500/40 rounded flex flex-col gap-1 p-1">
+                <div class="h-3.5 bg-blue-600/40 rounded border border-blue-500/40"></div>
+                <div class="grid grid-cols-2 gap-1 flex-1">
+                  <div class="bg-slate-800 rounded"></div>
+                  <div class="bg-slate-800 rounded"></div>
+                </div>
+              </div>
+              <span class="text-emerald-300 block text-[8px]">Dados Essenciais Visíveis</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.1.1 Prevenção de poluição visual -->
+        <div class="bento-card rounded-3xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">2.1.1</span>
+          <h4 class="text-lg font-bold text-white">Prevenção de poluição visual</h4>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Exiba apenas os KPIs principais e de maior impacto. Visões complexas, detalhamentos profundos e gráficos extensos e com muitas variáveis não pertencem à Home e devem ser movidos para páginas adequadas.
+          </p>
+
+          <!-- Ilustração: Filtro de Relevância de Indicadores -->
+          <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2 text-[10px] font-mono">
+            <div class="flex items-center justify-between text-slate-400">
+              <span>Home: Apenas Alto Impacto</span>
+              <span class="text-sky-300 font-bold">Filtro de Ruído</span>
+            </div>
+            <div class="flex gap-1.5">
+              <div class="flex-1 p-1.5 bg-blue-950/60 border border-blue-500/40 rounded text-center text-sky-300">
+                KPI Crítico
+              </div>
+              <div class="flex-1 p-1.5 bg-blue-950/60 border border-blue-500/40 rounded text-center text-sky-300">
+                KPI Suporte
+              </div>
+            </div>
+            <div class="p-1.5 bg-slate-900 border border-slate-800 rounded text-center text-slate-500 text-[9px]">
+              Tabelas analíticas &gt; 20 colunas &rarr; [Mover para Página Específica]
+            </div>
+          </div>
+        </div>
+
+        <!-- 2.1.1 Área de Ouro (canto superior esquerdo) -->
+        <div class="bento-card rounded-3xl p-6 space-y-3 border-2 border-amber-500/40">
+          <span class="text-xs font-mono text-amber-400 uppercase font-bold">2.1.1</span>
+          <h4 class="text-lg font-bold text-white">Área de Ouro (canto superior esquerdo)</h4>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Esta área é a região de maior fixação ocular do usuário, portanto insira nesta região o indicador de maior impacto estratégico para o negócio do cliente, ou status global do sistema de forma resumida, que será visto no primeiro segundo em que a página é carregada.
+          </p>
+
+          <!-- Ilustração da Área de Ouro em Destaque -->
+          <div class="bg-slate-950 p-2.5 rounded-2xl border border-amber-500/30">
+            <div class="grid grid-cols-3 gap-1.5 h-16">
+              <div class="bg-gradient-to-br from-amber-500/30 to-blue-600/30 border-2 border-amber-400 rounded-lg p-1.5 flex flex-col justify-center text-center">
+                <span class="text-[8px] font-mono text-amber-300 font-bold leading-tight">ÁREA DE OURO</span>
+                <span class="text-[10px] font-bold text-white leading-tight">1º Segundo</span>
+              </div>
+              <div class="bg-slate-800/80 rounded-lg border border-slate-700"></div>
+              <div class="bg-slate-800/80 rounded-lg border border-slate-700"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 2.2 Informação distribuída em Camadas -->
+      <div class="bento-card rounded-3xl p-7 space-y-4">
+        <div class="border-b border-slate-800 pb-3">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">2.2</span>
+          <h4 class="text-xl font-bold text-white mt-1">Informação distribuída em Camadas</h4>
+          <p class="text-slate-300 text-sm mt-1 leading-relaxed">
+            O layout deve aproveitar o padrão de leitura ocidental (da esquerda para a direita, de cima para baixo). Portanto, a arquitetura ideal da página deve ser dividida em 3 camadas lógicas de aprofundamento a partir do objetivo de conteúdo, e conforme a imagem ilustrativa:
+          </p>
+        </div>
+
+        <!-- Ilustração 2D Maquete Completa das 3 Camadas -->
+        <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-3 font-mono text-xs">
+          <!-- 1ª Camada -->
+          <div class="space-y-1">
+            <span class="text-[10px] text-sky-300 font-bold block uppercase">1ª CAMADA — VISÃO EXECUTIVA (O quê?) — idealmente 1 linha completa com itens</span>
+            <div class="grid grid-cols-4 gap-2">
+              <div class="p-2.5 rounded-xl bg-blue-950/60 border border-blue-500/40 text-center font-bold text-white">Big Number</div>
+              <div class="p-2.5 rounded-xl bg-blue-950/60 border border-blue-500/40 text-center font-bold text-white">Big Number</div>
+              <div class="p-2.5 rounded-xl bg-blue-950/60 border border-blue-500/40 text-center font-bold text-white">Big Number</div>
+              <div class="p-2.5 rounded-xl bg-blue-950/60 border border-blue-500/40 text-center font-bold text-white">Big Number</div>
+            </div>
+          </div>
+
+          <!-- 2ª Camada -->
+          <div class="space-y-1 pt-1">
+            <span class="text-[10px] text-emerald-400 font-bold block uppercase">2ª CAMADA — VISÃO OPERACIONAL (Por quê?) — máximo de 2 linhas completas com itens</span>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="h-16 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center text-slate-300">Gráfico</div>
+              <div class="h-16 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center text-slate-300">Gráfico</div>
+              <div class="h-16 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center text-slate-300">Gráfico</div>
+              <div class="h-16 rounded-xl bg-slate-900 border border-emerald-500/30 flex items-center justify-center text-slate-300">Gráfico</div>
+            </div>
+          </div>
+
+          <!-- 3ª Camada -->
+          <div class="space-y-1 pt-1">
+            <span class="text-[10px] text-purple-400 font-bold block uppercase">3ª CAMADA — ATALHOS DE AÇÃO — máximo de 2 linhas</span>
+            <div class="grid grid-cols-3 gap-2">
+              <div class="p-2 rounded-xl bg-slate-900 border border-purple-500/30 text-center text-slate-300 text-[11px]">Acesso Rápido</div>
+              <div class="p-2 rounded-xl bg-slate-900 border border-purple-500/30 text-center text-slate-300 text-[11px]">Acesso Rápido</div>
+              <div class="p-2 rounded-xl bg-slate-900 border border-purple-500/30 text-center text-slate-300 text-[11px]">Acesso Rápido</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+          <div class="bg-slate-900/90 border border-blue-500/40 p-4 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-sky-300 font-bold block uppercase">1ª Camada • Visão Executiva</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              1º camada ou linha correspondente à visão executiva, deve determinar o “O quê” está sendo demonstrado. Para inserir suas informações considere que olho humano busca padrões numéricos grandes primeiro, portanto a prioridade devem ser big numbers. No caso da ausência destes números, utilize contadores ou barras horizontais simples.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-emerald-400 font-bold block uppercase">2ª Camada • Visão Operacional</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              2º camada ou linha correspondente à visão operacional, deve determinar o “Por quê?” está sendo demonstrado. Priorize inserir uma camada de visualização de dados, como gráficos, por exemplo, que explicam as variações e o comportamento dos KPIs apresentados na 1ª camada. É possível que essa camada seja composta por uma única linha de dados única, mas que não deve ultrapassar duas linhas, a fim de respeitar a área útil de rolagem.
+            </p>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-purple-400 font-bold block uppercase">3ª Camada • Visão Detalhada</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              3º camada ou linha correspondente a visão detalhada, deve determinar o “Onde?”. Utilize-a como uma última camada de visualização principal da tela para inserir atalhos, rotinas, gráficos complementares e informações úteis e acionáveis.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2.3 Diretrizes para considerar a carga cognitiva -->
+      <div class="bento-card rounded-3xl p-7 space-y-6">
+        <div class="border-b border-slate-800 pb-3">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">2.3</span>
+          <h4 class="text-xl font-bold text-white mt-1">Diretrizes para considerar a carga cognitiva</h4>
+          <p class="text-slate-300 text-sm mt-1 leading-relaxed">
+            Para garantir que a Nova Home funcione como um facilitador invisível num contexto onde a leitura do cenário ocorre em frações de segundo, é fundamental respeitar os limites da atenção humana e aplicar atalhos mentais de assimilação visual. As seções a seguir detalham as restrições cognitivas estabelecidas para o layout, as regras espaciais de agrupamento (Leis de Gestalt), os padrões de clareza na comunicação e os requisitos técnicos de performance necessários para sustentar essa experiência.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+          <!-- 2.3.1 Lei da proximidade -->
+          <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-sky-400 font-bold block">2.3.1 Lei da proximidade</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              A hierarquia visual só tem valor se as informações dispostas na estrutura da interface forem facilmente compreendidas pelo usuário, desse modo métricas e dados que se relacionam devem estar agrupadas. Essa diretriz segue uma das Leis da Gestalt, que versa sobre o agrupamento de elementos e informações.
+            </p>
+            <p class="text-xs text-slate-400 leading-relaxed pt-1">
+              Portanto, se no topo da nova home o time optar por exibir um KPI de "Inadimplência", por exemplo, e houver um gráfico explicativo de "Inadimplência por Mês", este deve estar posicionado imediatamente abaixo ou ao lado dele.
+            </p>
+          </div>
+
+          <!-- 2.3.2 Atenção a comunicação e nomenclatura -->
+          <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-sky-400 font-bold block">2.3.2 Atenção a comunicação e nomenclatura</span>
+            <ul class="text-xs text-slate-300 space-y-2 list-disc pl-4 leading-relaxed">
+              <li><strong>Títulos e Descrições:</strong> Todos os Big Numbers e gráficos devem possuir títulos objetivos e descrições extremamente claras que representem o que aquela informação representa.</li>
+              <li><strong>Atenção ao jargão técnico:</strong> Expressões técnicas que venham de banco de dados ou jargões de desenvolvimento devem ser substituídos por uma linguagem de negócios voltada ao dia a dia do cliente.</li>
+              <li><strong>Padronização do nome das jornadas e rotinas cadastradas:</strong> As equipes de Produto devem definir bons nomes, além de incluir e padronizar descrições, de ambos os cadastros. Todos esses campos devem ser claros e adequados para representar a ação por trás de cada rotina ou jornada apresentada, a fim de garantir que o cliente seja capaz de diferenciar cada uma delas e também compreender de qual produto ela se refere. A nomenclatura não deve gerar ambiguidade e precisa ser consistente em todas as jornadas do Segmento. Exemplos práticos:
+                <ul class="list-circle pl-4 pt-1 space-y-1 text-slate-400">
+                  <li>Não é adequado inserir o mesmo nome de uma rotina para a sua descrição;</li>
+                  <li>No caso de uma rotina de contrato, por exemplo, deve-se descrever a qual tipo de contrato e de qual produto se refere, pois podem possuir diversas rotinas com ações semelhantes.</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <!-- 2.3.3 Quantidade máxima de itens (Lei de Miller) -->
+          <div class="bg-slate-900/90 border border-slate-800 p-5 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-emerald-400 font-bold block">2.3.3 Quantidade máxima de itens</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              A Lei da Psicologia de Miller, amplamente utilizada para comunicações textuais e visuais, determina que a memória de trabalho humana processa de forma eficiente apenas de 5 a 7 itens por vez. Desse modo, exceder esse valor em uma tela causa fadiga cognitiva e impede que o usuário priorize as informações. No caso de big numbers, por exemplo, é importante evitar ultrapassar essa quantidade na mesma interface.
+            </p>
+
+            <!-- Ilustração Comparativa: Lei de Miller (9 itens vs 5-7 itens) -->
+            <div class="grid grid-cols-2 gap-2 pt-1 font-mono text-[9px]">
+              <div class="bg-rose-950/20 border border-rose-500/30 p-2 rounded-xl text-center">
+                <span class="text-rose-400 block font-bold mb-1">✕ 9 Big Numbers</span>
+                <div class="grid grid-cols-3 gap-0.5">
+                  <div class="h-3 bg-slate-700 rounded"></div><div class="h-3 bg-slate-700 rounded"></div><div class="h-3 bg-slate-700 rounded"></div>
+                  <div class="h-3 bg-slate-700 rounded"></div><div class="h-3 bg-slate-700 rounded"></div><div class="h-3 bg-slate-700 rounded"></div>
+                  <div class="h-3 bg-slate-700 rounded"></div><div class="h-3 bg-slate-700 rounded"></div><div class="h-3 bg-slate-700 rounded"></div>
+                </div>
+                <span class="text-rose-300 block text-[8px] mt-1">Fadiga cognitiva</span>
+              </div>
+              <div class="bg-emerald-950/20 border border-emerald-500/30 p-2 rounded-xl text-center">
+                <span class="text-emerald-400 block font-bold mb-1">✓ 5 a 7 Itens</span>
+                <div class="grid grid-cols-3 gap-1">
+                  <div class="h-4 bg-emerald-600/40 border border-emerald-500/40 rounded"></div>
+                  <div class="h-4 bg-emerald-600/40 border border-emerald-500/40 rounded"></div>
+                  <div class="h-4 bg-emerald-600/40 border border-emerald-500/40 rounded"></div>
+                  <div class="h-4 bg-emerald-600/40 border border-emerald-500/40 rounded"></div>
+                  <div class="h-4 bg-emerald-600/40 border border-emerald-500/40 rounded"></div>
+                  <div class="h-4 bg-emerald-600/40 border border-emerald-500/40 rounded"></div>
+                </div>
+                <span class="text-emerald-300 block text-[8px] mt-1">Memorizável</span>
+              </div>
+            </div>
+
+            <div class="mt-2 p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">Limite Recomendado:</span>
+              <span class="text-emerald-400 font-bold">5 a 7 Big Numbers</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 2.4 e 2.5 Performance e Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="bento-card rounded-3xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">2.4</span>
+          <h4 class="text-lg font-bold text-white">Hierarquia e performance de carregamento</h4>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            A experiência do usuário na Nova Home depende tanto da visualização quanto da velocidade de resposta da tela e a hierarquia da informação não deve ser penalizada por lentidão sistêmica.
+          </p>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            Portanto, o padrão de desenvolvimento construído deve considerar a arquitetura dos dados desde o início. Os times técnicos devem garantir que a extração dos indicadores para a Home seja otimizada.
+          </p>
+        </div>
+
+        <div class="bento-card rounded-3xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">2.5 & 2.5.1</span>
+          <h4 class="text-lg font-bold text-white">Modelos de Grid e estruturas de layout</h4>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            A aplicação prática das regras de hierarquia e psicologia cognitiva se materializa também através da estrutura do grid da página. O posicionamento dos cards, a variação de tamanho entre os blocos e o agrupamento espacial são os responsáveis por ditar o fluxo de leitura ocular do usuário, guiando-o do indicador mais crítico até a ação operacional.
+          </p>
+          <div class="pt-2 border-t border-slate-800 space-y-2">
+            <h5 class="text-xs font-bold text-sky-300 font-mono">2.5.1 Siga o exemplo: Agrupamento e Assimetria</h5>
+            <p class="text-xs text-slate-300 leading-relaxed mt-1">
+              Estruturas completamente simétricas e com cards do mesmo tamanho quebram a arquitetura F/Z. Como a própria regra dita: "se tudo tem destaque visual, nada se destaca". O olho não sabe por onde começar a ler.
+            </p>
+            <p class="text-xs text-slate-300 leading-relaxed mt-1">
+              Portanto, utilize variações compactas ou em zigue-zague que aplicam as Leis de Gestalt ao aproximar fisicamente um indicador do seu gráfico correspondente, criando blocos temáticos autossuficientes.
+            </p>
+
+            <!-- Ilustração 2D: Grid Zigzag / Assimétrico por Proximidade -->
+            <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-2 font-mono text-[9px]">
+              <span class="text-sky-300 block font-bold">Padrão Z + Proximidade Gestalt</span>
+              <div class="grid grid-cols-12 gap-1.5">
+                <div class="col-span-5 p-2 bg-blue-950/80 border border-blue-500/40 rounded-lg text-center text-white font-bold">
+                  Big Number Principal
+                </div>
+                <div class="col-span-7 p-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-slate-300">
+                  Gráfico de Tendência (detalha KPI)
+                </div>
+                <div class="col-span-7 p-2 bg-slate-900 border border-slate-800 rounded-lg text-center text-slate-300">
+                  Gráfico de Comparação
+                </div>
+                <div class="col-span-5 p-2 bg-blue-950/80 border border-blue-500/40 rounded-lg text-center text-white font-bold">
+                  Big Numbers Secundários
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="cores" class="space-y-8">
+      <div class="border-b border-slate-800 pb-4">
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Guia Padrões de Cores
+        </h3>
+        <h4 class="text-base font-semibold text-sky-400 mt-1">3.1. Introdução</h4>
+        <p class="text-slate-300 text-sm mt-2 leading-relaxed">
+          Esta é uma proposta de direcionamento para o Guia de Estilos e Boas Práticas de Produto, com o intuito de orientar o time no desenvolvimento das telas na Nova Home RM, integrando o PO-UI e Smart-X com o Manual de Identidade Visual da TOTVS, as diretrizes de Business Intelligence (BI) e os padrões internacionais de acessibilidade da WCAG.
+        </p>
+      </div>
+
+      <!-- 3.2 Diretrizes de uso para Tags de Cores (po-tag do PO-UI) -->
+      <div class="bento-card rounded-3xl p-7 space-y-6">
+        <div>
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">3.2</span>
+          <h4 class="text-xl font-bold text-white mt-1">Diretrizes de uso para Tags de Cores (po-tag do PO-UI)</h4>
+          <p class="text-slate-300 text-sm mt-1 leading-relaxed">
+            As tags são elementos visuais essenciais na Nova Home para destacar os status, categorias e métricas nos cards de KPI’s e demais listas de tarefas.
+          </p>
+        </div>
+
+        <div class="space-y-3">
+          <h5 class="text-sm font-bold text-white font-mono">3.2.1. Tipos de Padrões Semânticos (p-type)</h5>
+          <p class="text-xs text-slate-300">
+            Esses padrões definem o tipo ou estado do sistema na tag exibida, garantindo um reconhecimento imediato dos usuários:
+          </p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 pt-1">
+            <div class="bg-emerald-500/10 border border-emerald-500/30 p-3 rounded-xl">
+              <span class="text-xs font-bold text-emerald-400 block font-mono">Success (verde)</span>
+              <p class="text-[11px] text-slate-300 mt-1">utilizada em casos de confirmações, conclusão de tarefas ou demais resultados positivos, de sucesso ou êxito em alguma tarefa ou job.</p>
+            </div>
+            <div class="bg-amber-500/10 border border-amber-500/30 p-3 rounded-xl">
+              <span class="text-xs font-bold text-amber-400 block font-mono">Warning (amarelo)</span>
+              <p class="text-[11px] text-slate-300 mt-1">utilizado em casos de alertas, avisos, pendências ou dados que exigem a atenção do usuário.</p>
+            </div>
+            <div class="bg-rose-500/10 border border-rose-500/30 p-3 rounded-xl">
+              <span class="text-xs font-bold text-rose-400 block font-mono">Danger (vermelho)</span>
+              <p class="text-[11px] text-slate-300 mt-1">destacam os erros, falhas ou avisos críticos de alto risco do sistema.</p>
+            </div>
+            <div class="bg-blue-500/10 border border-blue-500/30 p-3 rounded-xl">
+              <span class="text-xs font-bold text-sky-400 block font-mono">Indicação de info (azul)</span>
+              <p class="text-[11px] text-slate-300 mt-1">são informações gerais e conteúdos explicativos da interface.</p>
+            </div>
+            <div class="bg-slate-700/30 border border-slate-600/40 p-3 rounded-xl">
+              <span class="text-xs font-bold text-slate-300 block font-mono">Neutral (cinza)</span>
+              <p class="text-[11px] text-slate-400 mt-1">usado geralmente quando a tag não possui nenhuma informação crítica.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 pt-2 border-t border-slate-800">
+          <!-- 3.2.2 -->
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-sky-400 font-bold block">3.2.2. Paleta de Categorização (Caption Tag Colors vs p-color):</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Para categorização de dados e tags identificadoras, utilize as 35 cores disponíveis na paleta Caption Tag Colors (caption-tag-01 a caption-tag-35). Confira na imagem ao lado.
+            </p>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              <strong>Contraste de Texto em Tags:</strong> nas cores da paleta Caption Tag Colors, a cor do texto é fixa e definida via token ou classe CSS. Para cores legadas (color-01 a color-12, vide imagem ao lado), o componente ajusta a cor do texto automaticamente para preservar a legibilidade de acordo com a acessibilidade, mas é indispensável selecionar tonalidades de fundo com alto nível de contraste em relação ao layout.
+            </p>
+          </div>
+
+          <!-- 3.2.3 -->
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-sky-400 font-bold block">3.2.3. Acessibilidade Multimodal em Tags:</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Em conformidade com a WCAG, as cores não devem ser o único meio de transmitir uma informação. Pode-se utilizar também a propriedade “p-icon” para adicionar ícones explicativos ou combinar com rótulos de texto claros (“p-value” ou “p-label”), garantindo autonomia para usuários com daltonismo ou com baixa visão.
+            </p>
+          </div>
+
+          <!-- 3.2.4 -->
+          <div class="space-y-2">
+            <span class="text-xs font-mono text-amber-400 font-bold block">3.2.4. Atenção importante:</span>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Recomenda-se evitar a customização ou padronização de cores que não estejam contempladas na paleta Caption Tag Colors.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.3 Boas Práticas de Cores e Contraste em Gráficos -->
+      <div class="bento-card rounded-3xl p-7 space-y-4">
+        <span class="text-xs font-mono text-sky-400 uppercase font-bold">3.3</span>
+        <h4 class="text-xl font-bold text-white">Boas Práticas de Cores e Contraste em Gráficos</h4>
+        <p class="text-slate-300 text-sm leading-relaxed">
+          Os gráficos presentes na Nova Home (como gráficos de pizza, colunas empilhadas e área) exigem um certo cuidado cromático para evitar sobrecarga cognitiva e assegurar o entendimento das informações para os usuários.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5 pt-2">
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-sky-300 font-bold block uppercase">3.3.1. Harmonia e limitações de paleta de cores:</span>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc pl-4 leading-relaxed">
+              <li>Limite a visualização a somente 2 ou 3 cores principais, utilizando variações de opacidade, sombras ou espectros de cores análogas para expressar intensidade ou subcategorias.</li>
+              <li>Evite a utilização simultânea de múltiplas cores saturadas (efeito "arco-íris"), que polui a interface e dificulta a hierarquia de leitura.</li>
+              <li>Mantenha a mesma cor para representar a mesma variável em toda a página.</li>
+            </ul>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-emerald-300 font-bold block uppercase">3.3.2. Combinações funcionais mais recomendadas:</span>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc pl-4 leading-relaxed">
+              <li><strong>Cinza e Azul:</strong> Indicado para comparação temporal entre dados passados e atuais.</li>
+              <li><strong>Azul e Laranja:</strong> Excelente opção para contraste entre dados positivos (azul) e negativos (laranja), sendo uma alternativa segura ao verde/vermelho para daltônicos.</li>
+              <li><strong>Destaque por Contraste:</strong> Utilize cores vibrantes e de alto contraste exclusivamente para os dados mais relevantes, mantendo dados secundários em tons neutros ou de menor contraste (Data-ink Ratio).</li>
+            </ul>
+          </div>
+
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <span class="text-xs font-mono text-rose-300 font-bold block uppercase">3.3.3. Práticas para evitar em gráficos:</span>
+            <ul class="text-xs text-slate-300 space-y-1.5 list-disc pl-4 leading-relaxed">
+              <li>Nunca atribua vermelho para números positivos nem verde para números negativos.</li>
+              <li>Evite combinações de baixo contraste como azul claro sobre cinza.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3.4 & 3.5 Acessibilidade e Diagnóstico -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <div class="bento-card rounded-3xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">3.4</span>
+          <h4 class="text-lg font-bold text-white">Acessibilidade Digital e Requisitos WCAG</h4>
+          <p class="text-slate-300 text-xs sm:text-sm leading-relaxed">
+            O desenvolvimento dos componentes e visualizações da Nova Home deve atender aos padrões internacionais de acessibilidade web (WCAG 2.2 Nível AA).
+          </p>
+          <div class="space-y-2 pt-2 text-xs text-slate-300">
+            <div>
+              <strong class="text-sky-300 font-mono block">3.4.1. Contraste de Cores:</strong>
+              <p>Cada texto e elemento gráfico na interface precisa atingir os índices de contraste mínimos exigidos pela WCAG com um nível de AA, em relação ao seu plano de fundo.</p>
+              <p class="text-slate-400 mt-1">Consulte sempre a tabela de combinações de cores que são permitidas pelo Manual de Identidade Visual da TOTVS, ao definir as cores para cada elemento em uma interface.</p>
+            </div>
+            <div class="pt-2">
+              <strong class="text-sky-300 font-mono block">3.4.2. Leiturabilidade e Redução de Ruído:</strong>
+              <p>Em áreas compostas por gráficos, fotografias ou grafismos tridimensionais, garanta que legendas e rótulos estejam posicionados sobre superfícies neutras e sem ruídos visuais.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="bento-card rounded-3xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">3.5</span>
+          <h4 class="text-lg font-bold text-white">Diagnóstico e Ajustes Específicos para a Nova Home</h4>
+          <div class="space-y-3 text-xs text-slate-300 pt-1">
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+              <strong class="text-sky-300 font-mono block">3.5.1. Gráficos de indicadores (evolução de pedidos, fluxo de caixa, vendas por tipo etc):</strong>
+              <p><strong>Diagnóstico:</strong> as visualizações atuais utilizam um conjunto heterogêneo e altamente saturado de cores (vermelho, verde, azul, amarelo, roxo, rosa).</p>
+              <p><strong>Recomendação:</strong> uniformizar os gráficos aplicando a paleta primária/secundária TOTVS (tons de Azul Escuro, Azul e Roxo).</p>
+              <p><strong>Gráfico de Pizza:</strong> caso existam fatias menores que 10%, agrupe-as em uma fatia "outros" para melhorar a precisão visual.</p>
+            </div>
+            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 space-y-1">
+              <strong class="text-sky-300 font-mono block">3.5.2. Cards de Aplicativos e Tabela de Tarefas:</strong>
+              <p><strong>Diagnóstico:</strong> presença de múltiplos sinalizadores e dados de status em cards e tabelas.</p>
+              <p><strong>Recomendação:</strong> padronizar os sinalizadores de status utilizando o componente “po-tag” com os tipos semânticos (“success” para concluído, “warning” para pendente, “danger” para cancelado ou em atraso) e ícones correspondentes (p-icon).</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- 3.6 O Poder das Cores no Dashboard da Nova Home -->
+      <div class="bento-card rounded-3xl p-7 space-y-6">
+        <div>
+          <span class="text-xs font-mono text-sky-400 uppercase font-bold">3.6</span>
+          <h4 class="text-xl font-bold text-white mt-1">O Poder das Cores no Dashboard da Nova Home</h4>
+          <div class="text-slate-300 text-sm mt-2 space-y-2 leading-relaxed">
+            <h5 class="text-xs font-mono text-sky-300 uppercase font-bold">3.6.1. Breve Contexto</h5>
+            <p>
+              A utilização das cores vai muito além da estética, numa interface. Trata-se de uma ferramenta funcional que orienta a atenção dos usuários, indicando interatividade e organização da hierarquia de informações. Segundo as diretrizes do Animalia Design System da TOTVS, bem como das normas de acessibilidade (WCAG), o uso das cores deve ser intencional e bem dosado, garantindo que a informação seja compreensível para todos os utilizadores, levando em consideração também as suas capacidades visuais.
+            </p>
+            <p>
+              Este guia se destaca na aplicação prática de proporções (como a regra 60-30-10), além de critérios rigorosos de contraste e acessibilidade; bem como da seleção correta de diversos tipos de gráficos a serem utilizados.
+            </p>
+            <p>
+              O nosso maior objetivo é evitar a sobrecarga visual e garantir que os elementos críticos, como alertas de erro ou estados de sucesso, sejam imediatamente identificados através de uma correta combinação de cores e outros componentes visuais da interface.
+            </p>
+          </div>
+        </div>
+
+        <!-- Ilustração 2D da Regra 60-30-10 e Semáforo Semântico -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-2">
+          <!-- Regra 60-30-10 -->
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2">
+            <span class="text-xs font-mono text-sky-400 font-bold block">Siga a Regra 60-30-10</span>
+            <div class="h-16 flex rounded-xl overflow-hidden border border-slate-800 font-mono text-xs">
+              <div class="w-[60%] bg-[#0B192C] flex items-center justify-center text-sky-300 font-bold">
+                60% Predominante
+              </div>
+              <div class="w-[30%] bg-[#1E293B] flex items-center justify-center text-slate-300 font-bold">
+                30% Apoio
+              </div>
+              <div class="w-[10%] bg-[#2563EB] flex items-center justify-center text-white font-bold">
+                10%
+              </div>
+            </div>
+          </div>
+
+          <!-- Semáforo Semântico (Certo vs Errado) -->
+          <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs font-mono">
+            <span class="text-xs font-mono text-emerald-400 font-bold block">Consistência Semântica</span>
+            <div class="grid grid-cols-2 gap-2">
+              <div class="bg-rose-950/20 border border-rose-500/40 p-2 rounded-xl text-center">
+                <span class="text-rose-400 block font-bold text-[10px]">✕ ERRADO</span>
+                <span class="text-slate-300 text-[10px]">Verde para negativo</span>
+              </div>
+              <div class="bg-emerald-950/20 border border-emerald-500/40 p-2 rounded-xl text-center">
+                <span class="text-emerald-400 block font-bold text-[10px]">✓ CORRETO</span>
+                <span class="text-slate-300 text-[10px]">Padrão Semáforo</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5 pt-2 border-t border-slate-800 text-xs text-slate-300">
+          
+          <!-- 3.6.2 -->
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <span class="font-mono text-sky-400 font-bold block uppercase">3.6.2. Para que servem as cores afinal?</span>
+              <ul class="space-y-1.5 list-disc pl-4 leading-relaxed">
+                <li><strong>Comunicação funcional:</strong> as cores devem indicar o que é interativo, mostrar mudanças de estado (hover, selecionado) e ajudar na localização do utilizador dentro do dashboard.</li>
+                <li><strong>Hierarquia e feedback:</strong> utilize as cores para distinguir os diferentes tipos de informação, dar o tom da mensagem e fornecer feedback visual imediato (informando status de sucesso ou algum erro do sistema).</li>
+              </ul>
+            </div>
+
+            <!-- Ilustração 2D: Estados Interativos (Hover/Ativo) e Feedback Imediato -->
+            <div class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 font-mono text-[9px] space-y-2 mt-1">
+              <!-- Bloco 1: Comunicação Funcional (Estados) -->
+              <div>
+                <span class="text-slate-400 text-[8px] uppercase block mb-1">Comunicação Funcional (Estados):</span>
+                <div class="grid grid-cols-3 gap-1 text-center">
+                  <div class="p-1 rounded bg-slate-900 border border-slate-800 text-slate-400">
+                    Padrão
+                  </div>
+                  <div class="p-1 rounded bg-blue-900/50 border border-blue-400 text-sky-300 shadow-sm">
+                    Hover
+                  </div>
+                  <div class="p-1 rounded bg-blue-600 text-white font-bold flex items-center justify-center gap-0.5 shadow-md">
+                    <span>✓</span> Ativo
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bloco 2: Hierarquia & Feedback Imediato -->
+              <div class="pt-1.5 border-t border-slate-900">
+                <span class="text-slate-400 text-[8px] uppercase block mb-1">Feedback Imediato do Sistema:</span>
+                <div class="grid grid-cols-2 gap-1.5">
+                  <div class="px-1.5 py-1 rounded bg-emerald-950/60 border border-emerald-500/40 text-emerald-300 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                    <span>Sucesso</span>
+                  </div>
+                  <div class="px-1.5 py-1 rounded bg-rose-950/60 border border-rose-500/40 text-rose-300 flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-rose-400"></span>
+                    <span>Falha/Erro</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.6.3 -->
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <span class="font-mono text-emerald-400 font-bold block uppercase">3.6.3. Recomendação de boas práticas</span>
+            <ul class="space-y-1.5 list-disc pl-4">
+              <li><strong>Siga a regra 60-30-10:</strong> distribua as cores mantendo uma proporção de 60% para a cor predominante, 30% para cores de apoio e 10% para cores de destaque, para garantir um equilíbrio no padrão estético e visual.</li>
+              <li><strong>Garantia de um contraste mínimo:</strong> o nível recomendado de contraste deve ser de pelo menos 4.5:1 para textos e 3:1 para os demais componentes gráficos, utilizando algumas ferramentas tais como o "Coolors.co".</li>
+              <li><strong>Use cores semânticas corretamente:</strong> procure sempre utilizar tons de verde para identificar os dados positivos ou de sucesso, e os tons de vermelho para os dados negativos ou de erro, mantendo uma consistência cultural e intuitiva em relação à memória cognitiva dos usuários.</li>
+              <li><strong>Redundância visual:</strong> combine as cores com ícones, textos ou diferentes pesos de fonte para que a informação não dependa exclusivamente da percepção cromática.</li>
+            </ul>
+          </div>
+
+          <!-- 3.6.4 -->
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <span class="font-mono text-rose-400 font-bold block uppercase">3.6.4. O que evitar (alguns erros mais comuns)</span>
+            <ul class="space-y-1.5 list-disc pl-4">
+              <li><strong>Evite utilizar um nível de 100% de preto (#000):</strong> o contraste extremo de preto pode ser incômodo na leitura, em alguns casos. Prefira utilizar tons de cinza escuro, veja o exemplo nos quadros da imagem ao lado.</li>
+              <li><strong>Evite utilizar cores com alta saturação nos componentes:</strong> as cores muito saturadas são agressivas aos olhos, dessa forma, dê preferência às cores menos saturadas (tons pastéis) para manter o foco somente no conteúdo.</li>
+              <li><strong>Não utilize somente as cores para diferenciação:</strong> não confie apenas nas cores para transmitir uma mensagem crítica, pois os usuários daltônicos ou em ambientes com reflexo podem perder uma informação importante.</li>
+            </ul>
+          </div>
+
+          <!-- 3.6.5 -->
+          <div class="bg-slate-900/90 border border-slate-800 p-4 rounded-2xl space-y-2">
+            <span class="font-mono text-amber-400 font-bold block uppercase">3.6.5. Cores em gráficos</span>
+            <ul class="space-y-1.5 list-disc pl-4">
+              <li><strong>Consistência de dados:</strong> use uma única cor para representar o mesmo tipo de dados (ex: vendas mensais). Utilize cores diferentes apenas para comparar as categorias que forem distintas.</li>
+              <li><strong>Limite a quantidade de fatias dos gráficos:</strong> nos gráficos de pizza ou de rosca, evite utilizar mais de cinco fatias para não comprometer a legibilidade e o entendimento rápido dos usuários.</li>
+              <li><strong>Agrupamento "outros":</strong> em gráficos de rosca, valores menores de 10% devem ser agrupados em uma seção separada, tipo "outros" para evitar poluição visual, em relação aos demais valores maiores.</li>
+              <li><strong>Hierarquia de visualização, na "regra dos 5 segundos":</strong> posicione as informações críticas no topo superior esquerdo da interface, para um melhor entendimento imediato, por parte dos usuários.</li>
+              <li><strong>Elimine o excesso de casas decimais:</strong> procure sempre arredondar os valores para uma maior clareza visual (ex: use "850k" em vez de "$850.010,25").</li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="feedbacks" class="space-y-6">
+      <div class="border-b border-slate-800 pb-4">
+        <span class="text-xs font-mono text-sky-400 uppercase tracking-widest font-bold block">3.7</span>
+        <h3 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mt-1">
+          Feedbacks do Dev team Educacional
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- 3.7.1 Porcentagem nos gráficos -->
+        <div class="bento-card rounded-2xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 font-bold block">3.7.1. Porcentagem nos gráficos:</span>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Alguns desenvolvedores encontraram dificuldade para setar a exibição da unidade de porcentagem no gráfico de barras.
+          </p>
+
+          <!-- Ilustração do Feedback: Barra com % visível -->
+          <div class="mt-3 p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono text-slate-300 space-y-2">
+            <div class="flex items-center justify-between text-[11px] text-slate-400">
+              <span>Simulação: Visualização de Vendas</span>
+              <span class="text-sky-400 font-bold">75%</span>
+            </div>
+            <div class="w-full bg-slate-800 h-4 rounded-md overflow-hidden flex">
+              <div class="bg-blue-600 h-full w-3/4 flex items-center justify-end pr-2 text-[10px] text-white font-bold">
+                75%
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3.7.2 Informações do contexto para o usuário -->
+        <div class="bento-card rounded-2xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 font-bold block">3.7.2. Informações do contexto para o usuário:</span>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            O time também sentiu a falta das informações de contexto na tela. Na opinião deles esta seria uma informação muito importante para o usuário se situar em que contexto ele está logado. Na versão antiga do RM, esta informação vinha logo ali no rodapé da página para o usuário.
+          </p>
+
+          <!-- Ilustração do Rodapé de Contexto -->
+          <div class="mt-2 p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-[11px] font-mono text-slate-400 space-y-0.5">
+            <div class="flex items-center gap-1.5"><span class="text-sky-400">●</span> Coligada: 1 - Centro Universitário TOTVS SA</div>
+            <div class="flex items-center gap-1.5"><span class="text-sky-400">●</span> Filial: 1 - Filial Belo Horizonte</div>
+            <div class="flex items-center gap-1.5"><span class="text-sky-400">●</span> Nível de ensino: 2 - Ensino Básico</div>
+          </div>
+        </div>
+
+        <!-- 3.7.3 Telas ainda não migradas -->
+        <div class="bento-card rounded-2xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 font-bold block">3.7.3. Telas ainda não migradas:</span>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Ainda existem algumas telas que estão sendo abertas e exibidas na versão anterior do RM. Ou seja, em uma tela o usuário já se encontra na nova versão que foi migrada, mas ao clicar em alguma jornada, abre uma nova aba exibindo uma grid na versão anterior.</p>
+
+          <!-- Ilustração da Transição entre Versões -->
+          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between text-[10px] font-mono">
+            <span class="text-sky-300 font-bold">Nova Home RM</span>
+            <span class="text-amber-400">&rarr; Nova Aba &rarr;</span>
+            <span class="text-slate-400">Grid Versão Legada</span>
+          </div>
+        </div>
+
+        <!-- 3.7.4 Loading extenso -->
+        <div class="bento-card rounded-2xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 font-bold block">3.7.4. Loading extenso:</span>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Em alguns casos quando o carregamento da base de dados estiver demorando muito (devido a algumas questões de performance) a tela exibida será aquele “Loading Skeleton ou Shimmer”. Talvez seria interessante pensar também em alguma mensagem de status para o usuário, reforçando o comportamento de carregamento da página.</p>
+
+          <!-- Ilustração Shimmer / Skeleton com Mensagem de Status -->
+          <div class="mt-2 p-3 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+            <div class="h-3 w-3/4 rounded bg-slate-800 animate-pulse"></div>
+            <div class="h-3 w-1/2 rounded bg-slate-800 animate-pulse"></div>
+            <div class="text-[10px] font-mono text-sky-400 flex items-center gap-1.5 pt-1">
+              <span class="w-2 h-2 rounded-full bg-sky-400 animate-ping"></span>
+              Carregando dados da Home... Por favor, aguarde.
+            </div>
+          </div>
+        </div>
+
+        <!-- 3.7.5 Tag com a classe neutral -->
+        <div class="bento-card rounded-2xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 font-bold block">3.7.5. Tag com a classe neutral:</span>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Alguns desenvolvedores relataram que mesmo aplicando a classe neutro nas tags dentro dos cards, ela ainda continua o sinal de mais em frente ao valor destacado.
+          </p>
+
+          <!-- Ilustração do Bug da Tag Neutral -->
+          <div class="mt-2 p-3 bg-slate-950 rounded-xl border border-slate-800 text-xs font-mono space-y-1">
+            <div class="text-slate-400 text-[11px]">Total de Alunos Ativos com Pendências</div>
+            <div class="flex items-center justify-between">
+              <span class="text-lg font-bold text-white">10</span>
+              <span class="px-2 py-0.5 rounded bg-slate-800 text-amber-300 border border-slate-700 text-[11px] font-bold">
+                +35,71% do total
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3.7.6 Ordem dos cards pré-definidos -->
+        <div class="bento-card rounded-2xl p-6 space-y-3">
+          <span class="text-xs font-mono text-sky-400 font-bold block">3.7.6. Ordem dos cards pré-definidos:</span>
+          <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+            Em alguns casos a ordem dos cards não foi respeitada na configuração da nova home. Dessa forma, alguns cards estão sendo exibidos com um outro ordenamento, bem diferente daquele que foi pré-definido inicialmente pelos desenvolvedores.</p>
+
+          <!-- Ilustração do Ordenamento Esperado vs Exibido -->
+          <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-[10px] font-mono flex items-center justify-between">
+            <div class="space-y-0.5">
+              <span class="text-slate-400 block">Pré-definido:</span>
+              <span class="text-emerald-400 font-bold">01 &rarr; 02 &rarr; 03 &rarr; 04</span>
+            </div>
+            <div class="space-y-0.5 text-right">
+              <span class="text-slate-400 block">Renderizado:</span>
+              <span class="text-rose-400 font-bold">01 &rarr; 03 &rarr; 04 &rarr; 02</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="border-t border-slate-800 bg-[#050912] mt-20 py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white text-xs">
+          TH
+        </div>
+        <div>
+          <p class="text-xs text-slate-300 font-semibold">Padrões da Nova Home • Guia de UI e Visualização</p>
+          <p class="text-[11px] text-slate-500">Este documento é propriedade da TOTVS. Todos os direitos reservados. ©</p>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Gerenciador de Abas do Catálogo PO UI
+    function switchCatalogTab(tabId, element) {
+      const tabButtons = document.querySelectorAll('.catalog-tab-btn');
+      tabButtons.forEach(btn => {
+        btn.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-400/40', 'shadow-lg', 'shadow-blue-600/30');
+        btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
+      });
+
+      if (element) {
+        element.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-400/40', 'shadow-lg', 'shadow-blue-600/30');
+        element.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
+      }
+
+      const panes = document.querySelectorAll('.catalog-pane');
+      panes.forEach(pane => pane.classList.add('hidden'));
+
+      const targetPane = document.getElementById('tab-' + tabId);
+      if (targetPane) {
+        targetPane.classList.remove('hidden');
+      }
+    }
+
+    // Dados Exatos da Seção 1.1.5 Matriz de Decisão Rápida para DEVs
+    const matrixData = {
+      tempo: {
+        titulo: "O dado é uma variação ou histórico ao longo do TEMPO?",
+        detalhes: [
+          "Se for uma série contínua no tempo: Use o Gráfico de Linha. Exemplo: Evolução de acessos ao sistema por hora, acompanhamento diário de estoque.",
+          "Se a intenção for enfatizar o volume total acumulado no período: Use o Gráfico de Área. Exemplo: Faturamento acumulado ao longo dos meses do ano.",
+          "Se forem períodos discretos com poucas etapas: Use o Gráfico de Coluna. Exemplo: Comparativo de vendas entre os 4 trimestres do ano."
+        ],
+        recomendacao: "Gráfico de Linha, Área ou Coluna",
+        icone: "📈"
+      },
+      comparar: {
+        titulo: "O objetivo principal é COMPARAR categorias entre si?",
+        detalhes: [
+          "Se os rótulos forem longos OU se houver mais de 7 itens: Use o Gráfico de Barra. Exemplo: Comparativo de chamados abertos por departamento ou lista de filiais.",
+          "Se forem poucas categorias (até 7 itens) com nomes curtos: Use o Gráfico de Coluna. Exemplo: Despesas divididas por 3 unidades operacionais."
+        ],
+        recomendacao: "Gráfico de Barra ou Coluna",
+        icone: "📊"
+      },
+      meta: {
+        titulo: "O objetivo é medir o desempenho individual em relação a uma META fixa?",
+        detalhes: [
+          "Use o Gráfico de Gauge Semicircular. Exemplo: Porcentagem atingida da meta mensal de vendas ou percentual de cota de disco utilizada."
+        ],
+        recomendacao: "Gráfico de Gauge Semicircular",
+        icone: "🧭"
+      },
+      proporcao: {
+        titulo: "O objetivo é mostrar a PROPORÇÃO DE UM TODO (Soma = 100%)?",
+        detalhes: [
+          "Se você tiver até 5 categorias: Use o Gráfico de Rosca. Exemplo: Distribuição do orçamento por 4 grandes áreas.",
+          "Se você tiver mais de 5 categorias ou dados com valores muito baixos (<10%): NÃO use Pizza ou Rosca. Ação: Agrupe os itens menores que 10% em uma categoria \"Outros\" ou troque o componente para um Gráfico de Barra."
+        ],
+        recomendacao: "Gráfico de Rosca (Máx 5 Fatias)",
+        icone: "🍩"
+      },
+      perfil: {
+        titulo: "O objetivo é avaliar um PERFIL com MÚLTIPLOS ATRIBUTOS em eixos diferentes?",
+        detalhes: [
+          "Use o Gráfico de Radar. Exemplo: Avaliação do nível de maturidade corporativa em 5 pilares de conformidade."
+        ],
+        recomendacao: "Gráfico de Radar (Máx 2 Entidades)",
+        icone: "🕸️"
+      }
+    };
+
+    function updateMatrix(key, element) {
+      const buttons = document.querySelectorAll('.matrix-btn');
+      buttons.forEach(btn => {
+        btn.classList.remove('active', 'bg-blue-600', 'text-white', 'border-blue-400/40', 'shadow-lg', 'shadow-blue-600/30');
+        btn.classList.add('bg-slate-800', 'text-slate-300', 'border-slate-700');
+      });
+
+      const targetBtn = element || 
+        (typeof event !== 'undefined' && event && event.currentTarget) || 
+        document.querySelector(`[data-matrix-key="${key}"]`) || 
+        buttons[0];
+
+      if (targetBtn && targetBtn.classList) {
+        targetBtn.classList.add('active', 'bg-blue-600', 'text-white', 'border-blue-400/40', 'shadow-lg', 'shadow-blue-600/30');
+        targetBtn.classList.remove('bg-slate-800', 'text-slate-300', 'border-slate-700');
+      }
+
+      const data = matrixData[key];
+      if (!data) return;
+
+      const container = document.getElementById('matrixResult');
+      if (!container) return;
+
+      let itensHtml = data.detalhes.map(d => `<li class="text-xs text-slate-300 leading-relaxed font-sans">${d}</li>`).join('');
+
+      container.innerHTML = `
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-8 space-y-3">
+            <span class="text-xs font-mono text-sky-400 font-bold block uppercase">Diretriz PO UI 1.1.5</span>
+            <h4 class="text-xl font-bold text-white">${data.titulo}</h4>
+            <ul class="space-y-2 list-disc pl-5 pt-1">
+              ${itensHtml}
+            </ul>
+          </div>
+          <div class="md:col-span-4 bg-gradient-to-br from-blue-950/80 to-slate-900 border border-blue-500/30 rounded-2xl p-5 text-center shadow-lg">
+            <div class="text-4xl mb-2">${data.icone}</div>
+            <span class="text-xs text-slate-400 block font-mono">Componente Homologado</span>
+            <span class="text-base font-extrabold text-white block mt-1">${data.recomendacao}</span>
+            <div class="mt-3 inline-flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
+              Conformidade WCAG 2.2
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Inicialização segura
+    window.addEventListener('DOMContentLoaded', () => {
+      const firstMatrixBtn = document.querySelector('.matrix-btn');
+      if (firstMatrixBtn) {
+        updateMatrix('tempo', firstMatrixBtn);
+      }
+    });
+  </script>
+</body>
+</html>
